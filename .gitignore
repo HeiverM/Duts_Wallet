@@ -23,7 +23,7 @@
 hs_err_pid*
 replay_pid*
 
-# No necesary files
+# No necessary files
 *.pdf
 *.docx
 /*.md
