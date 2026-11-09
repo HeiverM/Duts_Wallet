@@ -66,8 +66,8 @@ public class GestorUsuarios {
     }
 
     // Devuelve el usuario si el identificador y la contraseña coinciden.
-    // Los estudiantes pueden iniciar sesión con su documento o con su nombre de usuario.
-    // El administrador es la excepción: solo entra con su nombre de usuario.
+    // Los estudiantes inician sesión con su documento (su nombre de usuario interno es igual a su documento).
+    // El administrador es la excepción: entra con su nombre de usuario.
     public Usuario iniciarSesion(String identificador, String contrasena) throws ValidacionException {
         if (identificador == null || identificador.trim().isEmpty()) {
             throw new ValidacionException("Credenciales incorrectas");
@@ -82,7 +82,7 @@ public class GestorUsuarios {
         }
 
         // 2) Si no se encontró un estudiante por documento, se busca por nombre de usuario
-        // (así entra el administrador, que es la excepción, y también el alias del estudiante)
+        // (así entra el administrador, que es la excepción)
         if (usuario == null) {
             usuario = buscarPorNombreUsuario(dato);
         }

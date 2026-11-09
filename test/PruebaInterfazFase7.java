@@ -52,7 +52,6 @@ public class PruebaInterfazFase7 {
                     prueba("VentanaInicio se construye con fondo", ventanaInicio != null);
                     prueba("Fondo de login usa PanelFondoLogin",
                             ventanaInicio.getContentPane().getClass().getSimpleName().equals("PanelFondoLogin"));
-                    ventanaInicio.dispose();
 
                     // Ventana de inicio en modo oscuro
                     GestorTema.alternarTema();
@@ -67,14 +66,14 @@ public class PruebaInterfazFase7 {
                     // Menu del estudiante (contiene BotonTema y Calculadora)
                     VentanaMenuEstudiante menu = new VentanaMenuEstudiante(estudiante, gestorUsuarios,
                             gestorMovimientos, gestorNovedades, gestorInscripciones, gestorNotificaciones,
-                            gestorAmigos);
+                            gestorAmigos, ventanaInicio);
                     prueba("VentanaMenuEstudiante se construye", menu != null);
                     menu.dispose();
 
                     // Menu del administrador
                     modelo.Administrador admin = (modelo.Administrador) gestorUsuarios.buscarPorNombreUsuario("admin");
                     VentanaMenuAdmin menuAdmin = new VentanaMenuAdmin(admin, gestorUsuarios,
-                            gestorMovimientos, gestorNovedades, gestorInscripciones);
+                            gestorMovimientos, gestorNovedades, gestorInscripciones, ventanaInicio);
                     prueba("VentanaMenuAdmin se construye", menuAdmin != null);
                     menuAdmin.dispose();
 

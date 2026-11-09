@@ -27,7 +27,6 @@ public class VentanaRegistro extends JFrame implements ActionListener {
 
     private JTextField txtDocumento;
     private JTextField txtNombre;
-    private JTextField txtUsuario;
     private JPasswordField txtContrasena;
     private JTextField txtPrograma;
     private JComboBox<String> cmbPregunta;
@@ -38,7 +37,7 @@ public class VentanaRegistro extends JFrame implements ActionListener {
     public VentanaRegistro(GestorUsuarios gestorUsuarios) {
         super("DUTS Wallet - Registro de estudiante");
         this.gestorUsuarios = gestorUsuarios;
-        setSize(450, 430);
+        setSize(450, 390);
         setLayout(null);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -53,35 +52,32 @@ public class VentanaRegistro extends JFrame implements ActionListener {
         txtDocumento = agregarCampoTexto(30);
         agregarEtiqueta("Nombre completo:", 70);
         txtNombre = agregarCampoTexto(70);
-        agregarEtiqueta("Usuario (alias):", 110);
-        txtUsuario = agregarCampoTexto(110);
-        txtUsuario.setToolTipText("Alias de la cuenta. Para iniciar sesión se usa el número de documento");
-        agregarEtiqueta("Contraseña:", 150);
+        agregarEtiqueta("Contraseña:", 110);
         txtContrasena = new JPasswordField();
-        txtContrasena.setBounds(190, 150, 210, 25);
+        txtContrasena.setBounds(190, 110, 210, 25);
         add(txtContrasena);
-        agregarEtiqueta("Programa académico:", 190);
-        txtPrograma = agregarCampoTexto(190);
-        agregarEtiqueta("Pregunta de seguridad:", 230);
+        agregarEtiqueta("Programa académico:", 150);
+        txtPrograma = agregarCampoTexto(150);
+        agregarEtiqueta("Pregunta de seguridad:", 190);
         cmbPregunta = new JComboBox<String>(PREGUNTAS);
-        cmbPregunta.setBounds(190, 230, 210, 25);
+        cmbPregunta.setBounds(190, 190, 210, 25);
         add(cmbPregunta);
-        agregarEtiqueta("Respuesta:", 270);
-        txtRespuesta = agregarCampoTexto(270);
+        agregarEtiqueta("Respuesta:", 230);
+        txtRespuesta = agregarCampoTexto(230);
 
         // Recordatorio de acceso: el estudiante inicia sesión con su número de documento
         JLabel lblAviso = new JLabel("Para iniciar sesión usará su número de documento y su contraseña.");
-        lblAviso.setBounds(30, 295, 400, 20);
+        lblAviso.setBounds(30, 255, 400, 20);
         add(lblAviso);
     }
 
     private void crearBotones() {
         btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setBounds(90, 330, 120, 30);
+        btnRegistrar.setBounds(90, 290, 120, 30);
         btnRegistrar.addActionListener(this);
         add(btnRegistrar);
         btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBounds(230, 330, 120, 30);
+        btnCancelar.setBounds(230, 290, 120, 30);
         btnCancelar.addActionListener(this);
         add(btnCancelar);
     }
@@ -103,26 +99,26 @@ public class VentanaRegistro extends JFrame implements ActionListener {
     private void registrar() throws ValidacionException {
         String documento = txtDocumento.getText().trim();
         String nombre = txtNombre.getText().trim();
-        String usuario = txtUsuario.getText().trim();
         String contrasena = new String(txtContrasena.getPassword());
         String programa = txtPrograma.getText().trim();
         String respuesta = txtRespuesta.getText().trim();
         String pregunta = (String) cmbPregunta.getSelectedItem();
 
         // Aquí se valida que ningún campo esté vacío ni tenga ";"
-        String[] valores = {documento, nombre, usuario, contrasena, programa, respuesta};
-        String[] nombres = {"Documento", "Nombre completo", "Usuario", "Contraseña", "Programa académico", "Respuesta"};
+        String[] valores = {documento, nombre, contrasena, programa, respuesta};
+        String[] nombres = {"Documento", "Nombre completo", "Contraseña", "Programa académico", "Respuesta"};
         for (int i = 0; i < valores.length; i++) {
             Validador.validarNoVacio(valores[i], nombres[i]);
             Validador.validarSinPuntoYComa(valores[i], nombres[i]);
         }
         validarDocumentoNumerico(documento);
 
-        // Aquí se crea un objeto Estudiante con new; los usuarios nuevos empiezan con saldo 0
-        Estudiante estudiante = new Estudiante(documento, nombre, usuario, contrasena,
+        // Aquí se crea un objeto Estudiante con new; los usuarios nuevos empiezan con saldo 0.
+        // El estudiante ya no escribe un alias: internamente su nombre de usuario es su documento
+        Estudiante estudiante = new Estudiante(documento, nombre, documento, contrasena,
                 pregunta, respuesta, programa, 0);
         gestorUsuarios.registrar(estudiante);
-        GestorAuditoria.registrar(usuario, "REGISTRO", "Nuevo estudiante con documento " + documento);
+        GestorAuditoria.registrar(documento, "REGISTRO", "Nuevo estudiante con documento " + documento);
     }
 
     // Revisa carácter por carácter que el documento solo tenga dígitos
@@ -143,7 +139,7 @@ public class VentanaRegistro extends JFrame implements ActionListener {
                         "Registro exitoso. Ya puede iniciar sesión con su número de documento");
                 dispose();
             } catch (ValidacionException error) {
-                GestorAuditoria.registrar(txtUsuario.getText().trim(), "ERROR", "Registro: " + error.getMessage());
+                GestorAuditoria.registrar(txtDocumento.getText().trim(), "ERROR", "Registro: " + error.getMessage());
                 JOptionPane.showMessageDialog(this, error.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == btnCancelar) {

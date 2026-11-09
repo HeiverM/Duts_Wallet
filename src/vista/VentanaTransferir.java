@@ -1,4 +1,4 @@
-// Ventana con el formulario para enviar DUTS a otro estudiante usando su nombre de usuario.
+// Ventana con el formulario para enviar DUTS a otro estudiante usando su número de documento.
 package vista;
 
 import excepciones.ValidacionException;
@@ -10,7 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import modelo.Estudiante;
-import modelo.Usuario;
 import persistencia.GestorAuditoria;
 import persistencia.GestorMovimientos;
 import persistencia.GestorNotificaciones;
@@ -32,9 +31,9 @@ public class VentanaTransferir extends JFrame implements ActionListener {
     private JButton btnEnviar;
     private JButton btnCancelar;
 
-    // usuarioReceptor llega vacío desde el menú, o con el usuario del amigo desde VentanaAmigos
+    // documentoReceptor llega vacío desde el menú, o con el documento del amigo desde VentanaAmigos
     public VentanaTransferir(Estudiante emisor, GestorUsuarios gestorUsuarios, GestorMovimientos gestorMovimientos,
-                             GestorNotificaciones gestorNotificaciones, String usuarioReceptor) {
+                             GestorNotificaciones gestorNotificaciones, String documentoReceptor) {
         super("DUTS Wallet - Transferir DUTS");
         this.emisor = emisor;
         this.gestorUsuarios = gestorUsuarios;
@@ -45,18 +44,18 @@ public class VentanaTransferir extends JFrame implements ActionListener {
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        crearComponentes(usuarioReceptor);
+        crearComponentes(documentoReceptor);
     }
 
-    private void crearComponentes(String usuarioReceptor) {
+    private void crearComponentes(String documentoReceptor) {
         lblSaldo = new JLabel("Saldo disponible: " + emisor.getSaldoDuts() + " DUTS");
         lblSaldo.setBounds(30, 20, 380, 25);
         add(lblSaldo);
-        agregarEtiqueta("Usuario receptor:", 60);
+        agregarEtiqueta("Documento receptor:", 60);
         txtReceptor = agregarCampoTexto(60);
         // Si viene desde Amigos, el receptor ya está elegido y no se puede cambiar
-        if (!usuarioReceptor.trim().isEmpty()) {
-            txtReceptor.setText(usuarioReceptor);
+        if (!documentoReceptor.trim().isEmpty()) {
+            txtReceptor.setText(documentoReceptor);
             txtReceptor.setEditable(false);
         }
         agregarEtiqueta("Valor (DUTS):", 100);
@@ -88,25 +87,24 @@ public class VentanaTransferir extends JFrame implements ActionListener {
 
     // Valida el formulario, hace la transferencia y avisa al receptor
     private void enviar() throws ValidacionException {
-        String nombreReceptor = txtReceptor.getText().trim();
+        String documentoReceptor = txtReceptor.getText().trim();
         String descripcion = txtDescripcion.getText().trim();
-        Validador.validarNoVacio(nombreReceptor, "Usuario receptor");
+        Validador.validarNoVacio(documentoReceptor, "Documento receptor");
         int valor = Validador.validarEnteroPositivo(txtValor.getText(), "Valor");
         Validador.validarNoVacio(descripcion, "Descripción");
         Validador.validarSinPuntoYComa(descripcion, "Descripción");
 
         // El receptor debe existir y ser un estudiante (no se puede enviar al administrador)
-        Usuario usuario = gestorUsuarios.buscarPorNombreUsuario(nombreReceptor);
-        if (!(usuario instanceof Estudiante)) {
-            throw new ValidacionException("El usuario receptor no existe");
+        Estudiante receptor = gestorUsuarios.buscarEstudiantePorDocumento(documentoReceptor);
+        if (receptor == null) {
+            throw new ValidacionException("El estudiante receptor no existe");
         }
-        Estudiante receptor = (Estudiante) usuario;
         // El gestor valida el saldo suficiente y que no sea el mismo estudiante
         gestorMovimientos.transferir(emisor, receptor, valor, descripcion);
         gestorNotificaciones.agregar(receptor.getDocumento(),
-                "Recibiste " + valor + " DUTS de " + emisor.getNombreUsuario());
-        GestorAuditoria.registrar(emisor.getNombreUsuario(), "TRANSFERENCIA",
-                valor + " DUTS a " + receptor.getNombreUsuario());
+                "Recibiste " + valor + " DUTS de " + emisor.getNombreCompleto());
+        GestorAuditoria.registrar(emisor.getDocumento(), "TRANSFERENCIA",
+                valor + " DUTS a " + receptor.getDocumento());
     }
 
     // Único método que atiende los eventos de la ventana
@@ -118,7 +116,7 @@ public class VentanaTransferir extends JFrame implements ActionListener {
                         + emisor.getSaldoDuts() + " DUTS");
                 dispose();
             } catch (ValidacionException error) {
-                GestorAuditoria.registrar(emisor.getNombreUsuario(), "ERROR", "Transferencia: " + error.getMessage());
+                GestorAuditoria.registrar(emisor.getDocumento(), "ERROR", "Transferencia: " + error.getMessage());
                 JOptionPane.showMessageDialog(this, error.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == btnCancelar) {

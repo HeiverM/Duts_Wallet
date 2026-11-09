@@ -25,6 +25,7 @@ public class VentanaMenuAdmin extends JFrame implements ActionListener {
     private GestorMovimientos gestorMovimientos;
     private GestorNovedades gestorNovedades;
     private GestorInscripciones gestorInscripciones;
+    private VentanaInicio ventanaInicio; // Ventana a la que se vuelve al cerrar sesión
 
     private JButton btnAdminDuts;
     private JButton btnAdminNovedades;
@@ -34,13 +35,14 @@ public class VentanaMenuAdmin extends JFrame implements ActionListener {
 
     public VentanaMenuAdmin(Administrador administrador, GestorUsuarios gestorUsuarios,
                             GestorMovimientos gestorMovimientos, GestorNovedades gestorNovedades,
-                            GestorInscripciones gestorInscripciones) {
+                            GestorInscripciones gestorInscripciones, VentanaInicio ventanaInicio) {
         super("DUTS Wallet - Menú administrador");
         this.administrador = administrador;
         this.gestorUsuarios = gestorUsuarios;
         this.gestorMovimientos = gestorMovimientos;
         this.gestorNovedades = gestorNovedades;
         this.gestorInscripciones = gestorInscripciones;
+        this.ventanaInicio = ventanaInicio;
         setSize(500, 320);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
@@ -106,7 +108,8 @@ public class VentanaMenuAdmin extends JFrame implements ActionListener {
             // Admin accede con gestor de usuarios para elegir estudiante
             abrirConTema(new VentanaCalculadora(null, gestorMovimientos, gestorNovedades, gestorUsuarios));
         } else if (e.getSource() == btnSalir) {
-            dispose();
+            // Cerrar sesión: la ventana de inicio cierra las demás ventanas y vuelve a mostrarse
+            ventanaInicio.volverAlInicio();
         }
     }
 }

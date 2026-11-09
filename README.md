@@ -108,7 +108,7 @@ java -cp out vista.Main
 - Usuario: `admin`
 - Contraseña: `admin123`
 
-**Estudiantes:** se registran desde la ventana de inicio con el botón "Registrarse" e ingresan con su **número de documento** (el nombre de usuario también funciona como alias).
+**Estudiantes:** se registran desde la ventana de inicio con el botón "Registrarse" (no necesitan elegir nombre de usuario) e ingresan con su **número de documento** y su contraseña.
 
 ---
 
@@ -165,6 +165,14 @@ El proyecto fue diseñado con fines académicos para demostrar los 5 pilares de 
 30. ✅ Color institucional Pantone 5535 C (`#132F20`) en botones, títulos y barras de progreso
 31. ✅ Login con imagen de fondo (1280×720, formulario a la izquierda)
 32. ✅ Login de estudiantes por documento; el administrador mantiene su acceso por usuario
+
+### Ajustes de la ventana principal y la sesión (Fase 8)
+33. ✅ Texto del login siempre visible en modo oscuro; logo más grande
+34. ✅ Registro sin alias y transferencias identificando al receptor por documento
+35. ✅ Perfil sin nombre de usuario
+36. ✅ "Cerrar sesión" devuelve a la ventana principal (con los campos limpios)
+37. ✅ Botón "Salir de la aplicación" con confirmación
+38. ✅ Sin tooltips que den pistas de acceso
 
 ---
 
@@ -233,8 +241,8 @@ El proyecto fue desarrollado siguiendo estrictas restricciones académicas:
 - ✅ 44 clases implementadas
 - ✅ Compilación exitosa con Java 8 (`--release 8`, 0 errores)
 - ✅ Todas las restricciones técnicas respetadas (0 coincidencias en la lista negra)
-- ✅ 26 requisitos funcionales + 6 ajustes de interfaz cubiertos
-- ✅ Pruebas automáticas: 40/40 de lógica y 9/9 de interfaz
+- ✅ 26 requisitos funcionales + 12 ajustes de interfaz y sesión cubiertos
+- ✅ Pruebas automáticas en `test/` (ejecutar con `test/ejecutar_pruebas.ps1`): 98 de ajustes Fase 8, 40 de lógica y 19 de interfaz
 - ✅ Pilares de POO aplicados y documentados
 - ✅ Código comentado para sustentación
 

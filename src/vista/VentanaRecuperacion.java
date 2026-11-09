@@ -49,7 +49,6 @@ public class VentanaRecuperacion extends JFrame implements ActionListener {
         agregarEtiqueta("Documento o usuario:", 30);
         txtUsuario = new JTextField();
         txtUsuario.setBounds(170, 30, 150, 25);
-        txtUsuario.setToolTipText("El estudiante puede buscar con su documento o con su alias");
         add(txtUsuario);
         btnBuscar = new JButton("Buscar");
         btnBuscar.setBounds(330, 30, 100, 25);

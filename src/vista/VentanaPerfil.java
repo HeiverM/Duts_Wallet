@@ -18,7 +18,7 @@ public class VentanaPerfil extends JFrame implements ActionListener {
     public VentanaPerfil(Estudiante estudiante) {
         super("DUTS Wallet - Mi perfil");
         this.estudiante = estudiante;
-        setSize(450, 430);
+        setSize(450, 400);
         setLayout(null);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -31,31 +31,30 @@ public class VentanaPerfil extends JFrame implements ActionListener {
     private void crearDatosCuenta() {
         agregarDato("Nombre:", estudiante.getNombreCompleto(), 25);
         agregarDato("Documento:", estudiante.getDocumento(), 55);
-        agregarDato("Usuario:", estudiante.getNombreUsuario(), 85);
-        agregarDato("Programa:", estudiante.getProgramaAcademico(), 115);
-        agregarDato("Saldo disponible:", estudiante.getSaldoDuts() + " DUTS", 145);
+        agregarDato("Programa:", estudiante.getProgramaAcademico(), 85);
+        agregarDato("Saldo disponible:", estudiante.getSaldoDuts() + " DUTS", 115);
     }
 
     // Barra de progreso con el porcentaje hacia la meta de grado
     private void crearAvanceMeta() {
         JLabel lblMeta = new JLabel("Meta de grado: " + Estudiante.META_DUTS + " DUTS");
-        lblMeta.setBounds(30, 190, 380, 25);
+        lblMeta.setBounds(30, 160, 380, 25);
         add(lblMeta);
         JProgressBar barraMeta = new JProgressBar(0, 100);
         barraMeta.setValue(estudiante.getPorcentajeMeta());
         // Muestra el porcentaje escrito dentro de la barra
         barraMeta.setStringPainted(true);
-        barraMeta.setBounds(30, 220, 380, 28);
+        barraMeta.setBounds(30, 190, 380, 28);
         add(barraMeta);
-        agregarDato("DUTS acumulados:", estudiante.getSaldoDuts() + " DUTS", 260);
-        agregarDato("DUTS faltantes:", estudiante.getDutsFaltantes() + " DUTS", 290);
+        agregarDato("DUTS acumulados:", estudiante.getSaldoDuts() + " DUTS", 230);
+        agregarDato("DUTS faltantes:", estudiante.getDutsFaltantes() + " DUTS", 260);
         String estado = "Meta en progreso";
         if (estudiante.metaCumplida()) {
             estado = "Meta cumplida";
         }
-        agregarDato("Estado:", estado, 320);
+        agregarDato("Estado:", estado, 290);
         btnCerrar = new JButton("Cerrar");
-        btnCerrar.setBounds(165, 355, 110, 28);
+        btnCerrar.setBounds(165, 325, 110, 28);
         btnCerrar.addActionListener(this);
         add(btnCerrar);
     }

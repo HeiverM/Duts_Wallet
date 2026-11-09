@@ -29,6 +29,7 @@ public class VentanaMenuEstudiante extends JFrame implements ActionListener {
     private GestorInscripciones gestorInscripciones;
     private GestorNotificaciones gestorNotificaciones;
     private GestorAmigos gestorAmigos;
+    private VentanaInicio ventanaInicio; // Ventana a la que se vuelve al cerrar sesión
 
     private JButton btnPerfil;
     private JButton btnTransferir;
@@ -44,7 +45,7 @@ public class VentanaMenuEstudiante extends JFrame implements ActionListener {
     public VentanaMenuEstudiante(Estudiante estudiante, GestorUsuarios gestorUsuarios,
                                  GestorMovimientos gestorMovimientos, GestorNovedades gestorNovedades,
                                  GestorInscripciones gestorInscripciones, GestorNotificaciones gestorNotificaciones,
-                                 GestorAmigos gestorAmigos) {
+                                 GestorAmigos gestorAmigos, VentanaInicio ventanaInicio) {
         super("DUTS Wallet - Menú estudiante");
         this.estudiante = estudiante;
         this.gestorUsuarios = gestorUsuarios;
@@ -53,6 +54,7 @@ public class VentanaMenuEstudiante extends JFrame implements ActionListener {
         this.gestorInscripciones = gestorInscripciones;
         this.gestorNotificaciones = gestorNotificaciones;
         this.gestorAmigos = gestorAmigos;
+        this.ventanaInicio = ventanaInicio;
         setSize(500, 580);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
@@ -155,7 +157,8 @@ public class VentanaMenuEstudiante extends JFrame implements ActionListener {
         } else if (e.getSource() == btnCalculadora) {
             abrirConTema(new VentanaCalculadora(estudiante, gestorMovimientos, gestorNovedades, null));
         } else if (e.getSource() == btnSalir) {
-            dispose();
+            // Cerrar sesión: la ventana de inicio cierra las demás ventanas y vuelve a mostrarse
+            ventanaInicio.volverAlInicio();
         }
     }
 }

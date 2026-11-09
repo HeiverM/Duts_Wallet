@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.table.JTableHeader;
 import vista.BotonTema;
+import vista.PanelFondoLogin;
 
 // Aquí se aplica encapsulamiento: la paleta y el estado del tema están centralizados
 // en métodos static con atributos privados
@@ -108,7 +109,12 @@ public class GestorTema {
                 }
             } else if (c instanceof JLabel) {
                 JLabel etiqueta = (JLabel) c;
-                etiqueta.setForeground(getColorTexto());
+                // Las etiquetas sobre la imagen de fondo del login siempre son blancas (no dependen del tema)
+                if (contenedor instanceof PanelFondoLogin) {
+                    etiqueta.setForeground(Color.WHITE);
+                } else {
+                    etiqueta.setForeground(getColorTexto());
+                }
             } else if (c instanceof JTextField || c instanceof JPasswordField) {
                 JTextField campo = (JTextField) c;
                 campo.setBackground(getColorCampoFondo());

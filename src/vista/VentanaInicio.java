@@ -4,6 +4,7 @@ package vista;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -42,6 +43,7 @@ public class VentanaInicio extends JFrame implements ActionListener {
     private JButton btnRegistrarse;
     private JButton btnRecuperar;
     private JButton btnSoporte;
+    private JButton btnSalir;
     private BotonTema btnTema;
 
     public VentanaInicio(GestorUsuarios gestorUsuarios, GestorMovimientos gestorMovimientos,
@@ -80,7 +82,7 @@ public class VentanaInicio extends JFrame implements ActionListener {
 
         // Título
         JLabel lblTitulo = new JLabel("DUTS Wallet", JLabel.CENTER);
-        lblTitulo.setFont(lblTitulo.getFont().deriveFont(28f));
+        lblTitulo.setFont(lblTitulo.getFont().deriveFont(31f));
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setBounds(xFormulario, yFormulario, anchoFormulario, 40);
         panelFondo.add(lblTitulo);
@@ -98,7 +100,6 @@ public class VentanaInicio extends JFrame implements ActionListener {
 
         txtUsuario = new JTextField(18);
         txtUsuario.setBounds(xFormulario + 30, yFormulario + 130, 360, 30);
-        txtUsuario.setToolTipText("Estudiantes: su número de documento. Administrador: admin");
         panelFondo.add(txtUsuario);
 
         // Campo Contraseña
@@ -133,6 +134,11 @@ public class VentanaInicio extends JFrame implements ActionListener {
         btnSoporte.addActionListener(this);
         panelFondo.add(btnSoporte);
 
+        btnSalir = new JButton("Salir de la aplicación");
+        btnSalir.setBounds(xFormulario + 30, yFormulario + 430, 360, 32);
+        btnSalir.addActionListener(this);
+        panelFondo.add(btnSalir);
+
         // Botón de tema (esquina superior derecha)
         btnTema = new BotonTema();
         btnTema.setBounds(1130, 20, 130, 32);
@@ -147,19 +153,45 @@ public class VentanaInicio extends JFrame implements ActionListener {
         GestorAuditoria.registrar(usuario.getNombreUsuario(), "LOGIN", usuario.getRol());
 
         // Aquí se aplica polimorfismo: usuario puede ser Estudiante o Administrador
-        // y cada uno implementa getRol() de forma diferente
+        // y cada uno implementa getRol() de forma diferente.
+        // La ventana de inicio solo se oculta (no se destruye) para poder volver a ella al cerrar sesión
         if (usuario.getRol().equals("ESTUDIANTE")) {
             VentanaMenuEstudiante ventana = new VentanaMenuEstudiante((Estudiante) usuario, gestorUsuarios,
-                    gestorMovimientos, gestorNovedades, gestorInscripciones, gestorNotificaciones, gestorAmigos);
+                    gestorMovimientos, gestorNovedades, gestorInscripciones, gestorNotificaciones, gestorAmigos, this);
             GestorTema.aplicarTema(ventana);
             ventana.setVisible(true);
-            dispose();
+            setVisible(false);
         } else if (usuario.getRol().equals("ADMINISTRADOR")) {
             VentanaMenuAdmin ventana = new VentanaMenuAdmin((Administrador) usuario, gestorUsuarios,
-                    gestorMovimientos, gestorNovedades, gestorInscripciones);
+                    gestorMovimientos, gestorNovedades, gestorInscripciones, this);
             GestorTema.aplicarTema(ventana);
             ventana.setVisible(true);
-            dispose();
+            setVisible(false);
+        }
+    }
+
+    // Lo llaman los menús al cerrar sesión: cierra todas las demás ventanas, limpia los campos y vuelve a mostrarse
+    public void volverAlInicio() {
+        Frame[] ventanas = Frame.getFrames();
+        for (int i = 0; i < ventanas.length; i++) {
+            if (ventanas[i] != this && ventanas[i].isDisplayable()) {
+                ventanas[i].dispose();
+            }
+        }
+        txtUsuario.setText("");
+        txtContrasena.setText("");
+        GestorTema.aplicarTema(this);
+        setVisible(true);
+        txtUsuario.requestFocusInWindow();
+    }
+
+    // Pregunta si de verdad se quiere salir y, si el usuario confirma, termina la aplicación
+    private void salirDeLaAplicacion() {
+        int respuesta = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro que desea salir de la aplicación?", "Salir",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (respuesta == JOptionPane.YES_OPTION) {
+            System.exit(0);
         }
     }
 
@@ -168,6 +200,8 @@ public class VentanaInicio extends JFrame implements ActionListener {
         try {
             if (e.getSource() == btnIngresar) {
                 iniciarSesion();
+            } else if (e.getSource() == btnSalir) {
+                salirDeLaAplicacion();
             } else if (e.getSource() == btnRegistrarse) {
                 VentanaRegistro ventana = new VentanaRegistro(gestorUsuarios);
                 GestorTema.aplicarTema(ventana);

@@ -126,9 +126,9 @@ public class VentanaAmigos extends JFrame implements ActionListener {
         if (amigo == null) {
             throw new ValidacionException("El amigo ya no existe en el sistema");
         }
-        // Se abre la ventana de transferir con el nombre de usuario del amigo prellenado
+        // Se abre la ventana de transferir con el documento del amigo prellenado
         VentanaTransferir ventana = new VentanaTransferir(estudiante, gestorUsuarios, gestorMovimientos,
-                gestorNotificaciones, amigo.getNombreUsuario());
+                gestorNotificaciones, amigo.getDocumento());
         util.GestorTema.aplicarTema(ventana);
         ventana.setVisible(true);
     }
