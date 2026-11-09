@@ -65,8 +65,6 @@ Duts_Wallet/
 ├── comprobantes/           # Comprobantes de transferencia
 ├── recursos/               # Imágenes de la aplicación (Fondo_login.jpg)
 ├── test/                   # Pruebas automáticas de lógica e interfaz (no se entregan)
-├── AGENTS.md               # Especificación completa para agentes de IA
-├── plan_implementacion.md  # Plan de desarrollo iterativo (58 tareas, 7 fases)
 └── README.md               # Este archivo
 ```
 
@@ -214,13 +212,6 @@ El proyecto fue desarrollado siguiendo estrictas restricciones académicas:
 - ✅ Ciclos `for`, `for-each`, `while`, condicionales `if-else`, `switch` clásico
 - ✅ Eventos con `implements ActionListener` y método `actionPerformed` único por ventana
 - ✅ Layouts: `BorderLayout`, `FlowLayout`, `GridLayout`, `setLayout(null)` con `setBounds`
-
----
-
-## 📖 Documentación completa
-
-- **`AGENTS.md`**: especificación completa del proyecto (arquitectura, restricciones, reglas de estilo, flujo de trabajo para agentes de IA) y sección 7 con el control de cambios de la Fase 7
-- **`plan_implementacion.md`**: plan de desarrollo iterativo con las 58 tareas (T1–T58) organizadas en 7 fases
 
 ---
 
