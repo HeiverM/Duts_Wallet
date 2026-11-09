@@ -64,7 +64,6 @@ Duts_Wallet/
 ├── reportes/               # CSV exportados
 ├── comprobantes/           # Comprobantes de transferencia
 ├── recursos/               # Imágenes de la aplicación (Fondo_login.jpg)
-├── test/                   # Pruebas automáticas de lógica e interfaz (no se entregan)
 └── README.md               # Este archivo
 ```
 
@@ -233,7 +232,6 @@ El proyecto fue desarrollado siguiendo estrictas restricciones académicas:
 - ✅ Compilación exitosa con Java 8 (`--release 8`, 0 errores)
 - ✅ Todas las restricciones técnicas respetadas (0 coincidencias en la lista negra)
 - ✅ 26 requisitos funcionales + 12 ajustes de interfaz y sesión cubiertos
-- ✅ Pruebas automáticas en `test/` (ejecutar con `test/ejecutar_pruebas.ps1`): 98 de ajustes Fase 8, 40 de lógica y 19 de interfaz
 - ✅ Pilares de POO aplicados y documentados
 - ✅ Código comentado para sustentación
 
