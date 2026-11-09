@@ -6,38 +6,49 @@
 
 ## 📋 Descripción
 
-DUTS Wallet es un prototipo funcional de escritorio desarrollado en **Java con interfaz gráfica Swing (`JFrame`)** que permite a los estudiantes de la UTS administrar su moneda virtual institucional llamada **DUTS**. El sistema permite:
+DUTS Wallet es un prototipo funcional de escritorio desarrollado en **Java con interfaz gráfica Swing** que permite a los estudiantes de la UTS administrar su moneda virtual institucional llamada **DUTS** y hacer seguimiento a la **meta de 70.000 DUTS** exigida para graduarse.
 
-- 💰 Consultar saldo y hacer seguimiento a la **meta de 70.000 DUTS** para graduarse
-- 💸 Transferir DUTS entre estudiantes
-- 📊 Ver historial de movimientos con filtros por tipo y fecha
-- 📈 Consultar estadísticas y promedios (por semana, mes, año y cuatrimestre)
-- 🧮 Usar la **calculadora de DUTS** (faltantes para la meta, simulador de transferencia y proyección)
-- 🌗 Cambiar entre **modo claro y modo oscuro** desde cualquier menú principal
+**Para el estudiante:**
+- 💰 Consultar saldo y avance hacia la meta de grado
+- 💸 Transferir DUTS a otros estudiantes usando su número de documento
+- 📊 Ver el historial de movimientos con filtros por tipo y fecha
+- 📈 Consultar promedios de DUTS por semana, mes, año y cuatrimestre
 - 📉 Visualizar un dashboard interactivo de los últimos 60 días
+- 🧮 Usar la calculadora de DUTS (faltantes para la meta, simulador de transferencia y proyección)
 - 🎓 Inscribirse en novedades institucionales (eventos que otorgan DUTS)
 - 🔔 Recibir notificaciones automáticas (transferencias, inscripciones, proximidad de eventos)
-- 👥 Administrar amigos y hacer transferencias rápidas
-- 📄 Exportar historial a CSV y generar comprobantes de transferencia
-- 🛡️ Recuperar contraseña con pregunta de seguridad
+- 👥 Agregar amigos, ver su avance y hacerles transferencias rápidas
+- 📄 Exportar el historial a CSV y generar comprobantes de transferencia
+- 🛡️ Recuperar la contraseña con una pregunta de seguridad
+- 🌗 Cambiar entre modo claro y modo oscuro
 
-**Panel de administración:**
-- ➕ Asignar, actualizar y eliminar DUTS de estudiantes
-- 📝 CRUD completo de novedades institucionales
-- ✅ Marcar asistencia o inasistencia de estudiantes (con penalización del 20% por inasistencia)
+**Para el administrador:**
+- ➕ Asignar, actualizar y eliminar DUTS de los estudiantes
+- 📝 Crear, consultar, actualizar y eliminar novedades institucionales
+- ✅ Marcar asistencia o inasistencia a eventos (con penalización del 20 % por inasistencia)
 
 ---
 
 ## 🎯 Características técnicas
 
-- **Lenguaje:** Java (sintaxis compatible con Java 8, compilado con JDK 17+)
+- **Lenguaje:** Java, con sintaxis compatible con Java 8
 - **Interfaz:** Swing (`JFrame`, `JDialog`, `JPanel`, `JTable`, `JOptionPane`, etc.)
-- **Persistencia:** Archivos de texto plano (`.txt`) con separador `;`
+- **Persistencia:** archivos de texto plano (`.txt`) con separador `;`
 - **Sin dependencias externas:** solo el SDK estándar de Java
-- **Arquitectura:** orientada a objetos con aplicación directa de los 5 pilares de POO
+- **Arquitectura:** orientada a objetos, con aplicación directa de los 5 pilares de POO
 - **Validaciones centralizadas:** clase `Validador` con métodos reutilizables
-- **Tema visual:** modo claro/oscuro global centralizado en `util.GestorTema` (color institucional Pantone 5535 C `#132F20`)
-- **Auditoría oculta:** registro de todas las operaciones importantes en `datos/auditoria.txt`
+- **Tema visual:** modo claro y oscuro global, con el color institucional Pantone 5535 C (`#132F20`)
+- **Auditoría oculta:** registro de las operaciones importantes en `datos/auditoria.txt`
+
+---
+
+## 🧰 Requisitos de ejecución
+
+- **Java:** JDK 8 o superior (el proyecto se desarrolló y probó con JDK 21, compilando con sintaxis de Java 8). Se necesita el JDK completo, no solo el JRE, para poder compilar el código fuente.
+- **Sistema operativo:** Windows, Linux o macOS con entorno gráfico, porque la aplicación usa ventanas de escritorio y no funciona en terminales sin pantalla.
+- **Dependencias:** ninguna. No requiere instalar librerías, bases de datos, servidores ni conexión a internet.
+- **Permisos de escritura:** la carpeta del proyecto debe permitir crear archivos, ya que la aplicación genera `datos/`, `reportes/` y `comprobantes/` por su cuenta.
+- **Imagen de fondo:** el archivo `recursos/Fondo_login.jpg` debe conservarse en esa ruta. Si falta, la aplicación avisa y muestra un fondo de color sólido.
 
 ---
 
@@ -49,17 +60,16 @@ Duts_Wallet/
 │   ├── interfaces/         # Persistible, Exportable
 │   ├── excepciones/        # ValidacionException
 │   ├── util/               # Validador, GestorTema, CalculadoraDuts
-│   ├── modelo/             # Usuario, Estudiante, Administrador, Movimiento, 
+│   ├── modelo/             # Usuario, Estudiante, Administrador, Movimiento,
 │   │                       # Novedad, Inscripcion, Notificacion, Amistad
-│   ├── persistencia/       # ArchivoTexto, Gestor... (8 clases)
-│   └── vista/              # 19 ventanas, 3 componentes, Main
-│                       # (VentanaInicio, VentanaRegistro, VentanaRecuperacion,
-│                        VentanaMenuEstudiante, VentanaMenuAdmin, VentanaPerfil,
-│                        VentanaTransferir, VentanaHistorial, VentanaEstadisticas,
-│                        VentanaDashboard, VentanaNovedades, VentanaNotificaciones,
-│                        VentanaAmigos, VentanaAdminDuts, VentanaAdminNovedades,
-│                        VentanaAdminAsistencia, VentanaCalculadora, VentanaSoporte,
-│                        BotonTema, PanelFondoLogin, PanelGrafico, Main)
+│   ├── persistencia/       # ArchivoTexto y los gestores de cada archivo (7)
+│   └── vista/              # Interfaz gráfica (Main y 21 clases de Swing):
+│                           #   · Acceso: inicio, registro, recuperación y soporte
+│                           #   · Estudiante: menú, perfil, transferencias, historial,
+│                           #     estadísticas, dashboard, novedades, notificaciones,
+│                           #     amigos y calculadora
+│                           #   · Administrador: menú, DUTS, novedades y asistencia
+│                           #   · Componentes: botón de tema, fondo del login y gráfico
 ├── datos/                  # Archivos .txt (se crean al ejecutar)
 ├── reportes/               # CSV exportados
 ├── comprobantes/           # Comprobantes de transferencia
@@ -69,43 +79,13 @@ Duts_Wallet/
 
 ---
 
-## 🚀 Cómo ejecutar
-
-### Requisitos previos
-- **JDK 8 o superior** instalado (probado con JDK 17 y JDK 21)
-- Terminal (PowerShell en Windows o Bash en Linux/Mac)
-
-### Compilación y ejecución
-
-**Desde la raíz del proyecto:**
-
-```powershell
-# Compilar todas las clases
-javac --release 8 -encoding UTF-8 -d out (Get-ChildItem -Recurse src -Filter *.java).FullName
-
-# Ejecutar la aplicación
-java -cp out vista.Main
-```
-
-**En Linux/Mac:**
-
-```bash
-# Compilar todas las clases
-javac --release 8 -encoding UTF-8 -d out $(find src -name "*.java")
-
-# Ejecutar la aplicación
-java -cp out vista.Main
-```
-
----
-
-## 🔐 Credenciales por defecto
+## 🔐 Acceso
 
 **Administrador:**
 - Usuario: `admin`
 - Contraseña: `admin123`
 
-**Estudiantes:** se registran desde la ventana de inicio con el botón "Registrarse" (no necesitan elegir nombre de usuario) e ingresan con su **número de documento** y su contraseña.
+**Estudiantes:** se registran desde la ventana de inicio con el botón "Registrarse" e ingresan con su **número de documento** y su contraseña.
 
 ---
 
@@ -118,58 +98,53 @@ El proyecto fue diseñado con fines académicos para demostrar los 5 pilares de 
 | **Encapsulamiento** | Todos los atributos son `private` con acceso por getters/setters. Las validaciones están centralizadas en la clase `Validador`. |
 | **Abstracción** | `Usuario` es una clase abstracta con métodos abstractos `getRol()` y `getResumenPerfil()` implementados por `Estudiante` y `Administrador`. |
 | **Herencia** | `Estudiante` y `Administrador` heredan de `Usuario`. Todas las ventanas heredan de `JFrame` o `JDialog`. |
-| **Polimorfismo** | En `VentanaInicio`, al hacer login, `usuario.getRol()` se ejecuta según el tipo real (`Estudiante` o `Administrador`) y se abre el menú correspondiente. |
+| **Polimorfismo** | En `VentanaInicio`, al iniciar sesión, `usuario.getRol()` se ejecuta según el tipo real (`Estudiante` o `Administrador`) y se abre el menú correspondiente. |
 | **Interfaces** | `Persistible` define `aLineaTexto()` para guardar en archivos. `Exportable` define `aFilaCsv()` para exportar. |
 
 ---
 
-## 📋 Funcionalidades completas (26 requisitos)
+## ✅ Funcionalidades
 
-### Base (16 requisitos)
-1. ✅ Aplicación gráfica con Swing/JFrame
-2. ✅ Menú inicial con login, registro, recuperación y soporte
-3. ✅ Registro de estudiantes con validaciones
-4. ✅ Inicio de sesión con validación de credenciales (estudiantes por **documento**; admin por usuario)
-5. ✅ Consulta de perfil (solo lectura)
-6. ✅ CRUD de asignaciones de DUTS (administrador)
-7. ✅ Consultar saldo actual de DUTS
-8. ✅ Promedios de DUTS (semana, mes, año, cuatrimestre de 90 días)
-9. ✅ Transferir DUTS entre estudiantes
-10. ✅ Validación de saldo suficiente
-11. ✅ Consultar novedades institucionales
-12. ✅ Inscribirse en novedades (fecha >= hoy)
-13. ✅ Cancelar inscripción
-14. ✅ CRUD de novedades (administrador)
-15. ✅ Validaciones y mensajes claros
-16. ✅ Historial filtrable por tipo y fechas
+### Requisitos base
+1. Aplicación gráfica con Swing/JFrame
+2. Menú inicial con ingreso, registro, recuperación de contraseña y soporte
+3. Registro de estudiantes con validaciones
+4. Inicio de sesión con validación de credenciales (estudiantes por **documento**; administrador por usuario)
+5. Consulta de perfil (solo lectura)
+6. CRUD de asignaciones de DUTS (administrador)
+7. Consulta del saldo actual de DUTS
+8. Promedios de DUTS por semana, mes, año y cuatrimestre (90 días)
+9. Transferencia de DUTS entre estudiantes
+10. Validación de saldo suficiente
+11. Consulta de novedades institucionales
+12. Inscripción en novedades (fecha igual o posterior a hoy)
+13. Cancelación de inscripciones
+14. CRUD de novedades (administrador)
+15. Validaciones y mensajes claros
+16. Historial filtrable por tipo y fechas
 
-### Adicionales (10 requisitos)
-17. ✅ Auditoría local oculta de todas las operaciones
-18. ✅ Exportación a CSV con promedios
-19. ✅ Barra de progreso hacia la meta de 70.000 DUTS
-20. ✅ Dashboard con gráfico de barras (últimos 60 días en 6 bloques de 10)
-21. ✅ Penalización del 20% por inasistencia
-22. ✅ Bandeja de notificaciones (transferencias, inscripciones, proximidad de eventos)
-23. ✅ Generador de comprobantes de transferencia
-24. ✅ Sistema de amigos con transferencia rápida
-25. ✅ Recuperación de contraseña con pregunta de seguridad
-26. ✅ Módulo de soporte con instrucciones y FAQ
+### Funcionalidades adicionales
+17. Auditoría local oculta de todas las operaciones
+18. Exportación a CSV con promedios
+19. Barra de progreso hacia la meta de 70.000 DUTS
+20. Dashboard con gráfico de barras (últimos 60 días en 6 bloques de 10)
+21. Penalización del 20 % por inasistencia
+22. Bandeja de notificaciones (transferencias, inscripciones, proximidad de eventos)
+23. Generador de comprobantes de transferencia
+24. Sistema de amigos con transferencia rápida
+25. Recuperación de contraseña con pregunta de seguridad
+26. Módulo de soporte con instrucciones y preguntas frecuentes
 
-### Ajustes de interfaz (Fase 7)
-27. ✅ Tema claro/oscuro global (botón en los menús principales; las ventanas hijas heredan el tema)
-28. ✅ Año de 4 cuatrimestres (período de 90 días, etiqueta "cuatrimestre")
-29. ✅ Calculadora de DUTS con módulos A (meta), B (simulador de transferencia) y C (proyección)
-30. ✅ Color institucional Pantone 5535 C (`#132F20`) en botones, títulos y barras de progreso
-31. ✅ Login con imagen de fondo (1280×720, formulario a la izquierda)
-32. ✅ Login de estudiantes por documento; el administrador mantiene su acceso por usuario
-
-### Ajustes de la ventana principal y la sesión (Fase 8)
-33. ✅ Texto del login siempre visible en modo oscuro; logo más grande
-34. ✅ Registro sin alias y transferencias identificando al receptor por documento
-35. ✅ Perfil sin nombre de usuario
-36. ✅ "Cerrar sesión" devuelve a la ventana principal (con los campos limpios)
-37. ✅ Botón "Salir de la aplicación" con confirmación
-38. ✅ Sin tooltips que den pistas de acceso
+### Mejoras de interfaz y sesión
+27. Tema claro/oscuro global (botón en los menús principales; las ventanas hijas heredan el tema)
+28. Calculadora de DUTS con módulos A (meta), B (simulador de transferencia) y C (proyección)
+29. Color institucional Pantone 5535 C en botones, títulos y barras de progreso
+30. Pantalla de inicio con imagen de fondo (1280×720) y formulario a la izquierda
+31. Texto del inicio siempre visible en modo oscuro
+32. Registro sin alias: el estudiante se identifica solo por su documento
+33. "Cerrar sesión" devuelve a la ventana principal con los campos limpios
+34. Botón "Salir de la aplicación" con confirmación
+35. Sin pistas de acceso visibles en la interfaz
 
 ---
 
@@ -177,63 +152,27 @@ El proyecto fue diseñado con fines académicos para demostrar los 5 pilares de 
 
 ### `datos/` (persistencia)
 - `usuarios.txt` — Estudiantes y administradores
-- `movimientos.txt` — Transferencias, asignaciones, eventos, penalizaciones
+- `movimientos.txt` — Transferencias, asignaciones, eventos y penalizaciones
 - `novedades.txt` — Eventos institucionales
 - `inscripciones.txt` — Inscripciones de estudiantes en novedades
 - `notificaciones.txt` — Notificaciones de cada usuario
 - `amigos.txt` — Relaciones de amistad
-- `auditoria.txt` — Log oculto de operaciones (con fecha, hora, usuario, acción, detalle)
+- `auditoria.txt` — Registro oculto de operaciones (fecha y hora, usuario, acción y detalle)
 
 ### `reportes/` (exportaciones)
-- `historial_<documento>.csv` — Historial de movimientos de un estudiante con promedios
+- `historial_<documento>.csv` — Historial de movimientos de un estudiante con sus promedios
 
-### `comprobantes/` (comprobantes)
+### `comprobantes/`
 - `comprobante_<codigo>.txt` — Comprobante de una transferencia enviada
-
----
-
-## 🛠️ Restricciones técnicas
-
-El proyecto fue desarrollado siguiendo estrictas restricciones académicas:
-
-**Prohibido:**
-- ❌ Streams, lambdas, referencias a métodos
-- ❌ Maven, Gradle, librerías externas
-- ❌ Patrones de diseño (Singleton, Factory, MVC formal, etc.)
-- ❌ Reflexión, hilos, concurrencia
-- ❌ `enum`, `record`, `var`, `Optional`, `interface` con métodos `default`
-- ❌ Bases de datos, JDBC, HTTP, JSON, XML
-- ❌ JavaFX, diseñadores visuales que generen `GroupLayout`
-- ❌ Cifrado o hash de contraseñas
-
-**Permitido:**
-- ✅ Solo SDK estándar: `java.io`, `java.util` (ArrayList, List), `java.time` (LocalDate, LocalDateTime), `javax.swing`, `java.awt`
-- ✅ Ciclos `for`, `for-each`, `while`, condicionales `if-else`, `switch` clásico
-- ✅ Eventos con `implements ActionListener` y método `actionPerformed` único por ventana
-- ✅ Layouts: `BorderLayout`, `FlowLayout`, `GridLayout`, `setLayout(null)` con `setBounds`
 
 ---
 
 ## 👨‍🎓 Contexto académico
 
-**Proyecto desarrollado para:**
 - **Asignatura:** Programación Orientada a Objetos (POO)
 - **Institución:** Unidades Tecnológicas de Santander (UTS)
 - **Nivel:** 3er semestre
 - **Objetivo:** Demostrar dominio de los pilares de POO en un proyecto funcional con persistencia local
-
----
-
-## ✅ Estado del proyecto
-
-**🎉 Proyecto completo y listo para probar (100% funcional)**
-
-- ✅ 44 clases implementadas
-- ✅ Compilación exitosa con Java 8 (`--release 8`, 0 errores)
-- ✅ Todas las restricciones técnicas respetadas (0 coincidencias en la lista negra)
-- ✅ 26 requisitos funcionales + 12 ajustes de interfaz y sesión cubiertos
-- ✅ Pilares de POO aplicados y documentados
-- ✅ Código comentado para sustentación
 
 ---
 
