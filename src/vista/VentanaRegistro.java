@@ -53,8 +53,9 @@ public class VentanaRegistro extends JFrame implements ActionListener {
         txtDocumento = agregarCampoTexto(30);
         agregarEtiqueta("Nombre completo:", 70);
         txtNombre = agregarCampoTexto(70);
-        agregarEtiqueta("Usuario:", 110);
+        agregarEtiqueta("Usuario (alias):", 110);
         txtUsuario = agregarCampoTexto(110);
+        txtUsuario.setToolTipText("Alias de la cuenta. Para iniciar sesión se usa el número de documento");
         agregarEtiqueta("Contraseña:", 150);
         txtContrasena = new JPasswordField();
         txtContrasena.setBounds(190, 150, 210, 25);
@@ -67,6 +68,11 @@ public class VentanaRegistro extends JFrame implements ActionListener {
         add(cmbPregunta);
         agregarEtiqueta("Respuesta:", 270);
         txtRespuesta = agregarCampoTexto(270);
+
+        // Recordatorio de acceso: el estudiante inicia sesión con su número de documento
+        JLabel lblAviso = new JLabel("Para iniciar sesión usará su número de documento y su contraseña.");
+        lblAviso.setBounds(30, 295, 400, 20);
+        add(lblAviso);
     }
 
     private void crearBotones() {
@@ -133,7 +139,8 @@ public class VentanaRegistro extends JFrame implements ActionListener {
         if (e.getSource() == btnRegistrar) {
             try {
                 registrar();
-                JOptionPane.showMessageDialog(this, "Registro exitoso. Ya puede iniciar sesión");
+                JOptionPane.showMessageDialog(this,
+                        "Registro exitoso. Ya puede iniciar sesión con su número de documento");
                 dispose();
             } catch (ValidacionException error) {
                 GestorAuditoria.registrar(txtUsuario.getText().trim(), "ERROR", "Registro: " + error.getMessage());

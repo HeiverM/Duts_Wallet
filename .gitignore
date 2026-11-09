@@ -1,6 +1,14 @@
 # Compiled class file
 *.class
 
+# Carpeta de compilación local
+out/
+
+# Datos generados por la aplicación
+/datos/
+/reportes/
+/comprobantes/
+
 # Log file
 *.log
 

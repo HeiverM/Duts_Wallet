@@ -13,17 +13,15 @@ public class PanelGrafico extends JPanel {
     private int[] ingresos;
     private int[] egresos;
 
-    // Colores de las dos series de barras
+    // Colores de las dos series de barras (fijos, no dependen del tema)
     private static final Color COLOR_INGRESOS = new Color(46, 125, 50);
     private static final Color COLOR_EGRESOS = new Color(198, 40, 40);
-    private static final Color COLOR_EJE = new Color(120, 120, 120);
-    private static final Color COLOR_TEXTO = new Color(40, 40, 40);
 
     public PanelGrafico() {
         // Se empiezan con 6 valores en cero para que el panel nunca sea nulo
         ingresos = new int[6];
         egresos = new int[6];
-        setBackground(Color.WHITE);
+        // Fondo dinámico según el tema (se actualiza al repintar)
     }
 
     // Recibe los 6 valores de cada serie y prepara el repintado de la gráfica
@@ -59,12 +57,15 @@ public class PanelGrafico extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        // Aplica el fondo según el tema actual
+        setBackground(util.GestorTema.getColorFondoPanel());
 
         int ancho = getWidth();
         int alto = getHeight();
 
-        // Título de la gráfica
-        g.setColor(COLOR_TEXTO);
+        // Título de la gráfica (texto dinámico según tema)
+        g.setColor(util.GestorTema.getColorTextoGrafico());
         g.drawString("Ingresos y egresos de DUTS por bloques de 10 días", 15, 20);
 
         // Marco del área donde se dibujan las barras
@@ -74,7 +75,8 @@ public class PanelGrafico extends JPanel {
         int areaAncho = ancho - margenIzquierdo - 20;
         int areaAlto = alto - margenSuperior - margenInferior;
 
-        g.setColor(COLOR_EJE);
+        // Ejes del gráfico (color dinámico según tema)
+        g.setColor(util.GestorTema.getColorEjeGrafico());
         g.drawLine(margenIzquierdo, margenSuperior, margenIzquierdo, margenSuperior + areaAlto);
         g.drawLine(margenIzquierdo, margenSuperior + areaAlto, margenIzquierdo + areaAncho, margenSuperior + areaAlto);
 
@@ -103,23 +105,23 @@ public class PanelGrafico extends JPanel {
             g.drawRect(xBloque + 10 + anchoBarra, margenSuperior + areaAlto - altoEgreso, anchoBarra, altoEgreso);
 
             // Etiqueta del bloque: número de días que representa
-            g.setColor(COLOR_TEXTO);
+            g.setColor(util.GestorTema.getColorTextoGrafico());
             g.drawString("D-" + ((cantidadBloques - i) * 10), xBloque + 8, margenSuperior + areaAlto + 18);
         }
 
-        // Escala vertical: valor máximo en la parte de arriba
-        g.setColor(COLOR_EJE);
+        // Escala vertical: valor máximo en la parte de arriba (colores dinámicos)
+        g.setColor(util.GestorTema.getColorEjeGrafico());
         g.drawString(String.valueOf(maximo), 10, margenSuperior + 10);
         g.drawString("0", 30, margenSuperior + areaAlto);
 
         // Leyenda de colores
         g.setColor(COLOR_INGRESOS);
         g.fillRect(margenIzquierdo + 10, alto - 22, 12, 12);
-        g.setColor(COLOR_TEXTO);
+        g.setColor(util.GestorTema.getColorTextoGrafico());
         g.drawString("Ingresos", margenIzquierdo + 27, alto - 12);
         g.setColor(COLOR_EGRESOS);
         g.fillRect(margenIzquierdo + 90, alto - 22, 12, 12);
-        g.setColor(COLOR_TEXTO);
+        g.setColor(util.GestorTema.getColorTextoGrafico());
         g.drawString("Egresos", margenIzquierdo + 107, alto - 12);
     }
 }

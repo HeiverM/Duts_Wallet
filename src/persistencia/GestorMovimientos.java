@@ -16,7 +16,7 @@ public class GestorMovimientos {
     public static final int DIAS_SEMANA = 7;
     public static final int DIAS_MES = 30;
     public static final int DIAS_ANIO = 365;
-    public static final int DIAS_SEMESTRE = 180;
+    public static final int DIAS_SEMESTRE = 90; // 4 cuatrimestres por año (360/4)
 
     private ArrayList<Movimiento> movimientos;
 
@@ -232,7 +232,7 @@ public class GestorMovimientos {
         lineas.add("Promedio por semana," + calcularPromedio(documento, DIAS_SEMANA));
         lineas.add("Promedio por mes," + calcularPromedio(documento, DIAS_MES));
         lineas.add("Promedio por año," + calcularPromedio(documento, DIAS_ANIO));
-        lineas.add("Promedio por semestre," + calcularPromedio(documento, DIAS_SEMESTRE));
+        lineas.add("Promedio por cuatrimestre," + calcularPromedio(documento, DIAS_SEMESTRE));
         ArchivoTexto.escribirLineas(ruta, lineas);
         return ruta;
     }

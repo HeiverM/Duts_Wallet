@@ -1,4 +1,4 @@
-// Ventana de solo lectura con los promedios de DUTS por semana, mes, año y semestre.
+// Ventana de solo lectura con los promedios de DUTS por semana, mes, año y cuatrimestre.
 package vista;
 
 import java.awt.event.ActionEvent;
@@ -38,13 +38,13 @@ public class VentanaEstadisticas extends JFrame implements ActionListener {
         double promedioSemana = gestorMovimientos.calcularPromedio(documento, GestorMovimientos.DIAS_SEMANA);
         double promedioMes = gestorMovimientos.calcularPromedio(documento, GestorMovimientos.DIAS_MES);
         double promedioAnio = gestorMovimientos.calcularPromedio(documento, GestorMovimientos.DIAS_ANIO);
-        double promedioSemestre = gestorMovimientos.calcularPromedio(documento, GestorMovimientos.DIAS_SEMESTRE);
+        double promedioCuatrimestre = gestorMovimientos.calcularPromedio(documento, GestorMovimientos.DIAS_SEMESTRE);
 
         // Muestra cada promedio en una fila con su etiqueta y valor
         agregarPromedio("Por semana:", promedioSemana, 70);
         agregarPromedio("Por mes:", promedioMes, 110);
         agregarPromedio("Por año:", promedioAnio, 150);
-        agregarPromedio("Por semestre:", promedioSemestre, 190);
+        agregarPromedio("Por cuatrimestre:", promedioCuatrimestre, 190);
 
         btnCerrar = new JButton("Cerrar");
         btnCerrar.setBounds(165, 240, 110, 28);

@@ -44,18 +44,19 @@ public class VentanaRecuperacion extends JFrame implements ActionListener {
         crearPasoCambiar();
     }
 
-    // Paso 1: escribir el usuario y buscar su pregunta de seguridad
+    // Paso 1: escribir el documento o el usuario y buscar su pregunta de seguridad
     private void crearPasoBuscar() {
-        agregarEtiqueta("Usuario:", 30);
+        agregarEtiqueta("Documento o usuario:", 30);
         txtUsuario = new JTextField();
         txtUsuario.setBounds(170, 30, 150, 25);
+        txtUsuario.setToolTipText("El estudiante puede buscar con su documento o con su alias");
         add(txtUsuario);
         btnBuscar = new JButton("Buscar");
         btnBuscar.setBounds(330, 30, 100, 25);
         btnBuscar.addActionListener(this);
         add(btnBuscar);
         agregarEtiqueta("Pregunta:", 75);
-        lblPregunta = new JLabel("(primero busque su usuario)");
+        lblPregunta = new JLabel("(primero busque su documento o usuario)");
         lblPregunta.setBounds(170, 75, 260, 25);
         add(lblPregunta);
     }
@@ -89,10 +90,15 @@ public class VentanaRecuperacion extends JFrame implements ActionListener {
         add(etiqueta);
     }
 
-    // Busca el usuario, muestra su pregunta y habilita el paso 2
+    // Busca el usuario por documento o por nombre de usuario, muestra su pregunta y habilita el paso 2
     private void buscarUsuario() throws ValidacionException {
-        Validador.validarNoVacio(txtUsuario.getText(), "Usuario");
-        Usuario usuario = gestorUsuarios.buscarPorNombreUsuario(txtUsuario.getText());
+        Validador.validarNoVacio(txtUsuario.getText(), "Documento o usuario");
+        String dato = txtUsuario.getText().trim();
+        // El estudiante puede buscar con su documento; el administrador con su nombre de usuario
+        Usuario usuario = gestorUsuarios.buscarPorDocumento(dato);
+        if (usuario == null) {
+            usuario = gestorUsuarios.buscarPorNombreUsuario(dato);
+        }
         if (usuario == null) {
             throw new ValidacionException("El usuario no existe");
         }

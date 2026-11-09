@@ -129,6 +129,7 @@ public class VentanaAmigos extends JFrame implements ActionListener {
         // Se abre la ventana de transferir con el nombre de usuario del amigo prellenado
         VentanaTransferir ventana = new VentanaTransferir(estudiante, gestorUsuarios, gestorMovimientos,
                 gestorNotificaciones, amigo.getNombreUsuario());
+        util.GestorTema.aplicarTema(ventana);
         ventana.setVisible(true);
     }
 

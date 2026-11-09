@@ -11,7 +11,9 @@ DUTS Wallet es un prototipo funcional de escritorio desarrollado en **Java con i
 - 💰 Consultar saldo y hacer seguimiento a la **meta de 70.000 DUTS** para graduarse
 - 💸 Transferir DUTS entre estudiantes
 - 📊 Ver historial de movimientos con filtros por tipo y fecha
-- 📈 Consultar estadísticas y promedios (por semana, mes, año y semestre)
+- 📈 Consultar estadísticas y promedios (por semana, mes, año y cuatrimestre)
+- 🧮 Usar la **calculadora de DUTS** (faltantes para la meta, simulador de transferencia y proyección)
+- 🌗 Cambiar entre **modo claro y modo oscuro** desde cualquier menú principal
 - 📉 Visualizar un dashboard interactivo de los últimos 60 días
 - 🎓 Inscribirse en novedades institucionales (eventos que otorgan DUTS)
 - 🔔 Recibir notificaciones automáticas (transferencias, inscripciones, proximidad de eventos)
@@ -34,6 +36,7 @@ DUTS Wallet es un prototipo funcional de escritorio desarrollado en **Java con i
 - **Sin dependencias externas:** solo el SDK estándar de Java
 - **Arquitectura:** orientada a objetos con aplicación directa de los 5 pilares de POO
 - **Validaciones centralizadas:** clase `Validador` con métodos reutilizables
+- **Tema visual:** modo claro/oscuro global centralizado en `util.GestorTema` (color institucional Pantone 5535 C `#132F20`)
 - **Auditoría oculta:** registro de todas las operaciones importantes en `datos/auditoria.txt`
 
 ---
@@ -45,16 +48,25 @@ Duts_Wallet/
 ├── src/
 │   ├── interfaces/         # Persistible, Exportable
 │   ├── excepciones/        # ValidacionException
-│   ├── util/               # Validador
+│   ├── util/               # Validador, GestorTema, CalculadoraDuts
 │   ├── modelo/             # Usuario, Estudiante, Administrador, Movimiento, 
 │   │                       # Novedad, Inscripcion, Notificacion, Amistad
 │   ├── persistencia/       # ArchivoTexto, Gestor... (8 clases)
-│   └── vista/              # 19 ventanas + Main
+│   └── vista/              # 19 ventanas, 3 componentes, Main
+│                       # (VentanaInicio, VentanaRegistro, VentanaRecuperacion,
+│                        VentanaMenuEstudiante, VentanaMenuAdmin, VentanaPerfil,
+│                        VentanaTransferir, VentanaHistorial, VentanaEstadisticas,
+│                        VentanaDashboard, VentanaNovedades, VentanaNotificaciones,
+│                        VentanaAmigos, VentanaAdminDuts, VentanaAdminNovedades,
+│                        VentanaAdminAsistencia, VentanaCalculadora, VentanaSoporte,
+│                        BotonTema, PanelFondoLogin, PanelGrafico, Main)
 ├── datos/                  # Archivos .txt (se crean al ejecutar)
 ├── reportes/               # CSV exportados
 ├── comprobantes/           # Comprobantes de transferencia
+├── recursos/               # Imágenes de la aplicación (Fondo_login.jpg)
+├── test/                   # Pruebas automáticas de lógica e interfaz (no se entregan)
 ├── AGENTS.md               # Especificación completa para agentes de IA
-├── plan_implementacion.md  # Plan de desarrollo iterativo (39 tareas)
+├── plan_implementacion.md  # Plan de desarrollo iterativo (58 tareas, 7 fases)
 └── README.md               # Este archivo
 ```
 
@@ -96,7 +108,7 @@ java -cp out vista.Main
 - Usuario: `admin`
 - Contraseña: `admin123`
 
-**Estudiantes:** se registran desde la ventana de inicio con el botón "Registrarse".
+**Estudiantes:** se registran desde la ventana de inicio con el botón "Registrarse" e ingresan con su **número de documento** (el nombre de usuario también funciona como alias).
 
 ---
 
@@ -120,11 +132,11 @@ El proyecto fue diseñado con fines académicos para demostrar los 5 pilares de 
 1. ✅ Aplicación gráfica con Swing/JFrame
 2. ✅ Menú inicial con login, registro, recuperación y soporte
 3. ✅ Registro de estudiantes con validaciones
-4. ✅ Inicio de sesión con validación de credenciales
+4. ✅ Inicio de sesión con validación de credenciales (estudiantes por **documento**; admin por usuario)
 5. ✅ Consulta de perfil (solo lectura)
 6. ✅ CRUD de asignaciones de DUTS (administrador)
 7. ✅ Consultar saldo actual de DUTS
-8. ✅ Promedios de DUTS (semana, mes, año, semestre)
+8. ✅ Promedios de DUTS (semana, mes, año, cuatrimestre de 90 días)
 9. ✅ Transferir DUTS entre estudiantes
 10. ✅ Validación de saldo suficiente
 11. ✅ Consultar novedades institucionales
@@ -145,6 +157,14 @@ El proyecto fue diseñado con fines académicos para demostrar los 5 pilares de 
 24. ✅ Sistema de amigos con transferencia rápida
 25. ✅ Recuperación de contraseña con pregunta de seguridad
 26. ✅ Módulo de soporte con instrucciones y FAQ
+
+### Ajustes de interfaz (Fase 7)
+27. ✅ Tema claro/oscuro global (botón en los menús principales; las ventanas hijas heredan el tema)
+28. ✅ Año de 4 cuatrimestres (período de 90 días, etiqueta "cuatrimestre")
+29. ✅ Calculadora de DUTS con módulos A (meta), B (simulador de transferencia) y C (proyección)
+30. ✅ Color institucional Pantone 5535 C (`#132F20`) en botones, títulos y barras de progreso
+31. ✅ Login con imagen de fondo (1280×720, formulario a la izquierda)
+32. ✅ Login de estudiantes por documento; el administrador mantiene su acceso por usuario
 
 ---
 
@@ -191,8 +211,8 @@ El proyecto fue desarrollado siguiendo estrictas restricciones académicas:
 
 ## 📖 Documentación completa
 
-- **`AGENTS.md`**: especificación completa del proyecto (arquitectura, restricciones, reglas de estilo, flujo de trabajo para agentes de IA)
-- **`plan_implementacion.md`**: plan de desarrollo iterativo con las 39 tareas (T1–T39) organizadas en 6 fases
+- **`AGENTS.md`**: especificación completa del proyecto (arquitectura, restricciones, reglas de estilo, flujo de trabajo para agentes de IA) y sección 7 con el control de cambios de la Fase 7
+- **`plan_implementacion.md`**: plan de desarrollo iterativo con las 58 tareas (T1–T58) organizadas en 7 fases
 
 ---
 
@@ -210,10 +230,11 @@ El proyecto fue desarrollado siguiendo estrictas restricciones académicas:
 
 **🎉 Proyecto completo y listo para probar (100% funcional)**
 
-- ✅ 39 clases implementadas
-- ✅ Compilación exitosa con Java 8
-- ✅ Todas las restricciones técnicas respetadas
-- ✅ 26 requisitos funcionales cubiertos
+- ✅ 44 clases implementadas
+- ✅ Compilación exitosa con Java 8 (`--release 8`, 0 errores)
+- ✅ Todas las restricciones técnicas respetadas (0 coincidencias en la lista negra)
+- ✅ 26 requisitos funcionales + 6 ajustes de interfaz cubiertos
+- ✅ Pruebas automáticas: 40/40 de lógica y 9/9 de interfaz
 - ✅ Pilares de POO aplicados y documentados
 - ✅ Código comentado para sustentación
 

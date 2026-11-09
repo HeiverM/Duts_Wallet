@@ -1,8 +1,9 @@
-// Ventana inicial de ingreso al sistema con opciones de login, registro, recuperación y soporte.
+// Ventana inicial de ingreso al sistema con fondo de imagen, tema y opciones de login, registro, recuperación y soporte.
 package vista;
 
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -23,6 +24,7 @@ import persistencia.GestorMovimientos;
 import persistencia.GestorNovedades;
 import persistencia.GestorNotificaciones;
 import persistencia.GestorUsuarios;
+import util.GestorTema;
 
 // Aquí se aplica herencia: la ventana es un JFrame y reutiliza todo su comportamiento
 public class VentanaInicio extends JFrame implements ActionListener {
@@ -40,6 +42,7 @@ public class VentanaInicio extends JFrame implements ActionListener {
     private JButton btnRegistrarse;
     private JButton btnRecuperar;
     private JButton btnSoporte;
+    private BotonTema btnTema;
 
     public VentanaInicio(GestorUsuarios gestorUsuarios, GestorMovimientos gestorMovimientos,
                          GestorNovedades gestorNovedades, GestorInscripciones gestorInscripciones,
@@ -51,47 +54,89 @@ public class VentanaInicio extends JFrame implements ActionListener {
         this.gestorInscripciones = gestorInscripciones;
         this.gestorNotificaciones = gestorNotificaciones;
         this.gestorAmigos = gestorAmigos;
-        setSize(420, 240);
-        setLayout(new GridLayout(5, 1, 10, 10));
+        
+        setSize(1280, 720);
+        setMinimumSize(new Dimension(1024, 600));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(true);
+        
         crearComponentes();
+        GestorTema.aplicarTema(this);
     }
 
-    // Crea el título de bienvenida, los campos de texto y los botones
+    // Crea el fondo con imagen, el formulario a la izquierda y el botón de tema
     private void crearComponentes() {
-        JLabel lblTitulo = new JLabel("DUTS Wallet - Sistema de gestión de DUTS", JLabel.CENTER);
-        add(lblTitulo);
+        // Panel de fondo con la imagen
+        PanelFondoLogin panelFondo = new PanelFondoLogin();
+        setContentPane(panelFondo);
+        panelFondo.setLayout(null);
 
-        JPanel panelUsuario = new JPanel(new FlowLayout());
-        panelUsuario.add(new JLabel("Usuario:"));
+        // Panel del formulario (izquierda, sobre el overlay del fondo)
+        int anchoFormulario = 420;
+        int altoFormulario = 520;
+        int xFormulario = 40;
+        int yFormulario = (720 - altoFormulario) / 2;
+
+        // Título
+        JLabel lblTitulo = new JLabel("DUTS Wallet", JLabel.CENTER);
+        lblTitulo.setFont(lblTitulo.getFont().deriveFont(28f));
+        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setBounds(xFormulario, yFormulario, anchoFormulario, 40);
+        panelFondo.add(lblTitulo);
+
+        JLabel lblSubtitulo = new JLabel("Sistema de gestión de DUTS", JLabel.CENTER);
+        lblSubtitulo.setForeground(Color.WHITE);
+        lblSubtitulo.setBounds(xFormulario, yFormulario + 45, anchoFormulario, 25);
+        panelFondo.add(lblSubtitulo);
+
+        // Campo de acceso: los estudiantes usan su documento y el administrador su nombre de usuario
+        JLabel lblUsuario = new JLabel("Documento o usuario:");
+        lblUsuario.setForeground(Color.WHITE);
+        lblUsuario.setBounds(xFormulario + 30, yFormulario + 100, 360, 25);
+        panelFondo.add(lblUsuario);
+
         txtUsuario = new JTextField(18);
-        panelUsuario.add(txtUsuario);
-        add(panelUsuario);
+        txtUsuario.setBounds(xFormulario + 30, yFormulario + 130, 360, 30);
+        txtUsuario.setToolTipText("Estudiantes: su número de documento. Administrador: admin");
+        panelFondo.add(txtUsuario);
 
-        JPanel panelContrasena = new JPanel(new FlowLayout());
-        panelContrasena.add(new JLabel("Contraseña:"));
+        // Campo Contraseña
+        JLabel lblContrasena = new JLabel("Contraseña:");
+        lblContrasena.setForeground(Color.WHITE);
+        lblContrasena.setBounds(xFormulario + 30, yFormulario + 180, 360, 25);
+        panelFondo.add(lblContrasena);
+
         txtContrasena = new JPasswordField(18);
-        panelContrasena.add(txtContrasena);
-        add(panelContrasena);
+        txtContrasena.setBounds(xFormulario + 30, yFormulario + 210, 360, 30);
+        panelFondo.add(txtContrasena);
 
-        JPanel panelBotones1 = new JPanel(new FlowLayout());
+        // Botones principales
         btnIngresar = new JButton("Ingresar");
+        btnIngresar.setBounds(xFormulario + 30, yFormulario + 270, 170, 35);
         btnIngresar.addActionListener(this);
-        panelBotones1.add(btnIngresar);
-        btnRegistrarse = new JButton("Registrarse");
-        btnRegistrarse.addActionListener(this);
-        panelBotones1.add(btnRegistrarse);
-        add(panelBotones1);
+        panelFondo.add(btnIngresar);
 
-        JPanel panelBotones2 = new JPanel(new FlowLayout());
+        btnRegistrarse = new JButton("Registrarse");
+        btnRegistrarse.setBounds(xFormulario + 220, yFormulario + 270, 170, 35);
+        btnRegistrarse.addActionListener(this);
+        panelFondo.add(btnRegistrarse);
+
+        // Botones secundarios
         btnRecuperar = new JButton("Recuperar contraseña");
+        btnRecuperar.setBounds(xFormulario + 30, yFormulario + 330, 360, 32);
         btnRecuperar.addActionListener(this);
-        panelBotones2.add(btnRecuperar);
+        panelFondo.add(btnRecuperar);
+
         btnSoporte = new JButton("Soporte");
+        btnSoporte.setBounds(xFormulario + 30, yFormulario + 380, 360, 32);
         btnSoporte.addActionListener(this);
-        panelBotones2.add(btnSoporte);
-        add(panelBotones2);
+        panelFondo.add(btnSoporte);
+
+        // Botón de tema (esquina superior derecha)
+        btnTema = new BotonTema();
+        btnTema.setBounds(1130, 20, 130, 32);
+        panelFondo.add(btnTema);
     }
 
     // Inicia sesión y abre el menú correspondiente según el rol del usuario
@@ -106,11 +151,13 @@ public class VentanaInicio extends JFrame implements ActionListener {
         if (usuario.getRol().equals("ESTUDIANTE")) {
             VentanaMenuEstudiante ventana = new VentanaMenuEstudiante((Estudiante) usuario, gestorUsuarios,
                     gestorMovimientos, gestorNovedades, gestorInscripciones, gestorNotificaciones, gestorAmigos);
+            GestorTema.aplicarTema(ventana);
             ventana.setVisible(true);
             dispose();
         } else if (usuario.getRol().equals("ADMINISTRADOR")) {
             VentanaMenuAdmin ventana = new VentanaMenuAdmin((Administrador) usuario, gestorUsuarios,
                     gestorMovimientos, gestorNovedades, gestorInscripciones);
+            GestorTema.aplicarTema(ventana);
             ventana.setVisible(true);
             dispose();
         }
@@ -123,12 +170,15 @@ public class VentanaInicio extends JFrame implements ActionListener {
                 iniciarSesion();
             } else if (e.getSource() == btnRegistrarse) {
                 VentanaRegistro ventana = new VentanaRegistro(gestorUsuarios);
+                GestorTema.aplicarTema(ventana);
                 ventana.setVisible(true);
             } else if (e.getSource() == btnRecuperar) {
                 VentanaRecuperacion ventana = new VentanaRecuperacion(gestorUsuarios);
+                GestorTema.aplicarTema(ventana);
                 ventana.setVisible(true);
             } else if (e.getSource() == btnSoporte) {
                 VentanaSoporte ventana = new VentanaSoporte(this);
+                GestorTema.aplicarTema(ventana);
                 ventana.setVisible(true);
             }
         } catch (ValidacionException error) {
