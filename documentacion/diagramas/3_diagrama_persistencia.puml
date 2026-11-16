@@ -1,0 +1,195 @@
+@startuml Diagrama de Clases - Paquete Persistencia
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor #E3F2FD
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+
+package persistencia {
+    
+    class ArchivoTexto <<utility>> {
+        --
+        + {static} leerLineas(ruta: String): ArrayList<String>
+        + {static} escribirLineas(ruta: String, lineas: ArrayList<String>): void
+        + {static} agregarLinea(ruta: String, linea: String): void
+    }
+    
+    class GestorUsuarios {
+        - usuarios: ArrayList<Usuario>
+        - RUTA: String = "datos/usuarios.txt"
+        --
+        + GestorUsuarios()
+        + cargar(): void
+        + guardar(): void
+        + registrar(estudiante: Estudiante): void
+        + iniciarSesion(identificador: String, contrasena: String): Usuario
+        + buscarPorDocumento(documento: String): Usuario
+        + buscarPorNombreUsuario(nombreUsuario: String): Usuario
+        + buscarEstudiantePorDocumento(documento: String): Estudiante
+        + listarEstudiantes(): ArrayList<Estudiante>
+        + restablecerContrasena(nombreUsuario: String, respuesta: String, nuevaContrasena: String): void
+        - crearAdministradorPorDefecto(): void
+    }
+    
+    class GestorMovimientos {
+        - movimientos: ArrayList<Movimiento>
+        - gestorUsuarios: GestorUsuarios
+        - RUTA: String = "datos/movimientos.txt"
+        + {static} DIAS_SEMANA: int = 7
+        + {static} DIAS_MES: int = 30
+        + {static} DIAS_ANIO: int = 365
+        + {static} DIAS_SEMESTRE: int = 90
+        --
+        + GestorMovimientos(gestorUsuarios: GestorUsuarios)
+        + cargar(): void
+        + guardar(): void
+        + transferir(emisor: Estudiante, receptor: Estudiante, valor: int, descripcion: String): void
+        + asignarDuts(estudiante: Estudiante, valor: int, descripcion: String): void
+        + registrarMovimiento(tipo: String, emisor: String, receptor: String, valor: int, descripcion: String): void
+        + listarPorUsuario(documento: String): ArrayList<Movimiento>
+        + listarAsignaciones(): ArrayList<Movimiento>
+        + actualizarAsignacion(codigo: String, nuevoValor: int, nuevaDescripcion: String): void
+        + eliminarAsignacion(codigo: String): void
+        + filtrar(documento: String, tipo: String, desde: LocalDate, hasta: LocalDate): ArrayList<Movimiento>
+        + calcularPromedio(documento: String, diasPeriodo: int): double
+        + exportarCsv(documento: String): String
+        + exportarComprobante(movimiento: Movimiento): String
+        + buscarPorCodigo(codigo: String): Movimiento
+        - generarCodigo(): String
+    }
+    
+    class GestorNovedades {
+        - novedades: ArrayList<Novedad>
+        - RUTA: String = "datos/novedades.txt"
+        --
+        + GestorNovedades()
+        + cargar(): void
+        + guardar(): void
+        + crear(novedad: Novedad): void
+        + listar(): ArrayList<Novedad>
+        + buscarPorCodigo(codigo: String): Novedad
+        + actualizar(novedad: Novedad): void
+        + eliminar(codigo: String): void
+        - crearNovedadesPorDefecto(): void
+        - generarCodigo(): String
+    }
+    
+    class GestorInscripciones {
+        - inscripciones: ArrayList<Inscripcion>
+        - gestorMovimientos: GestorMovimientos
+        - gestorNotificaciones: GestorNotificaciones
+        - gestorUsuarios: GestorUsuarios
+        - gestorNovedades: GestorNovedades
+        - RUTA: String = "datos/inscripciones.txt"
+        + {static} PORCENTAJE_PENALIZACION: int = 20
+        --
+        + GestorInscripciones(gm, gn, gu, gnv)
+        + cargar(): void
+        + guardar(): void
+        + inscribir(codigoNovedad: String, documentoEstudiante: String): void
+        + cancelar(codigoNovedad: String, documentoEstudiante: String): void
+        + marcarAsistencia(codigoNovedad: String, documentoEstudiante: String): void
+        + marcarInasistencia(codigoNovedad: String, documentoEstudiante: String): void
+        + listarPorEstudiante(documento: String): ArrayList<Inscripcion>
+        + listarInscritos(codigoNovedad: String): ArrayList<Inscripcion>
+    }
+    
+    class GestorNotificaciones {
+        - notificaciones: ArrayList<Notificacion>
+        - RUTA: String = "datos/notificaciones.txt"
+        --
+        + GestorNotificaciones()
+        + cargar(): void
+        + guardar(): void
+        + agregar(documento: String, mensaje: String): void
+        + listarPorUsuario(documento: String): ArrayList<Notificacion>
+        + generarProximidad(documento: String, inscripciones: ArrayList<Inscripcion>, gestorNovedades: GestorNovedades): void
+    }
+    
+    class GestorAmigos {
+        - amistades: ArrayList<Amistad>
+        - gestorUsuarios: GestorUsuarios
+        - RUTA: String = "datos/amigos.txt"
+        --
+        + GestorAmigos(gestorUsuarios: GestorUsuarios)
+        + cargar(): void
+        + guardar(): void
+        + agregar(documentoUsuario: String, documentoAmigo: String): void
+        + listarAmigos(documentoUsuario: String): ArrayList<Amistad>
+    }
+    
+    class GestorAuditoria <<utility>> {
+        + {static} RUTA: String = "datos/auditoria.txt"
+        --
+        + {static} registrar(usuario: String, accion: String, detalle: String): void
+    }
+}
+
+' Relaciones de dependencia (usa ArchivoTexto)
+ArchivoTexto <.. GestorUsuarios : usa
+ArchivoTexto <.. GestorMovimientos : usa
+ArchivoTexto <.. GestorNovedades : usa
+ArchivoTexto <.. GestorInscripciones : usa
+ArchivoTexto <.. GestorNotificaciones : usa
+ArchivoTexto <.. GestorAmigos : usa
+ArchivoTexto <.. GestorAuditoria : usa
+
+' Dependencias entre gestores (inyección por constructor)
+GestorUsuarios <-- GestorMovimientos : recibe
+GestorUsuarios <-- GestorInscripciones : recibe
+GestorUsuarios <-- GestorAmigos : recibe
+GestorMovimientos <-- GestorInscripciones : recibe
+GestorNotificaciones <-- GestorInscripciones : recibe
+GestorNovedades <-- GestorInscripciones : recibe
+
+' Asociaciones con modelos
+GestorUsuarios o-- "0..*" Usuario : contiene
+GestorMovimientos o-- "0..*" Movimiento : contiene
+GestorNovedades o-- "0..*" Novedad : contiene
+GestorInscripciones o-- "0..*" Inscripcion : contiene
+GestorNotificaciones o-- "0..*" Notificacion : contiene
+GestorAmigos o-- "0..*" Amistad : contiene
+
+note bottom of GestorUsuarios
+  Persiste en: datos/usuarios.txt
+  
+  Si el archivo no existe,
+  crea admin/admin123
+end note
+
+note bottom of GestorMovimientos
+  Persiste en: datos/movimientos.txt
+  
+  Ajusta saldos al:
+  - crear asignación
+  - actualizar asignación
+  - eliminar asignación
+  - transferir
+end note
+
+note bottom of GestorInscripciones
+  Persiste en: datos/inscripciones.txt
+  
+  Penalización: 20% del valorDuts
+  Se ajusta al saldo disponible
+end note
+
+note right of GestorAuditoria
+  Registro oculto de todas las
+  operaciones importantes.
+  
+  Formato:
+  fechaHora;usuario;accion;detalle
+end note
+
+note bottom of ArchivoTexto
+  Utilidades de lectura/escritura
+  de archivos de texto.
+  
+  Usa BufferedReader y PrintWriter
+  con try-catch (IOException)
+end note
+
+@enduml

@@ -1,0 +1,195 @@
+@startuml Diagrama de Clases - Paquete Vista (Módulos Estudiante)
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam nodesep 25
+skinparam ranksep 40
+skinparam class {
+    BackgroundColor #F3E5F5
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+skinparam stereotypeCBackgroundColor #E1BEE7
+
+package vista {
+
+    together {
+        class VentanaPerfil <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - barraProgreso: JProgressBar
+            --
+            + VentanaPerfil(estudiante)
+            - crearComponentes(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+
+        class VentanaEstadisticas <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - gestorMovimientos: GestorMovimientos
+            --
+            + VentanaEstadisticas(estudiante, gm)
+            - cargarPromedios(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+    }
+
+    together {
+        class VentanaTransferir <<JFrame, ActionListener>> {
+            - emisor: Estudiante
+            - txtDocumentoReceptor: JTextField
+            - txtValor: JTextField
+            - txtDescripcion: JTextField
+            - gestorUsuarios: GestorUsuarios
+            - gestorMovimientos: GestorMovimientos
+            - gestorNotificaciones: GestorNotificaciones
+            --
+            + VentanaTransferir(emisor, gu, gm, gn)
+            + VentanaTransferir(emisor, docReceptor, gu, gm, gn)
+            - crearComponentes(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+
+        class VentanaAmigos <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - txtDocumentoAmigo: JTextField
+            - tabla: JTable
+            - gestorAmigos: GestorAmigos
+            - gestorUsuarios: GestorUsuarios
+            - gestorMovimientos: GestorMovimientos
+            --
+            + VentanaAmigos(estudiante, ga, gu, gm, ...)
+            - cargarTabla(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+    }
+
+    together {
+        class VentanaHistorial <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - tabla: JTable
+            - modeloTabla: DefaultTableModel
+            - cmbTipo: JComboBox<String>
+            - txtDesde: JTextField
+            - txtHasta: JTextField
+            - gestorMovimientos: GestorMovimientos
+            --
+            + VentanaHistorial(estudiante, gm)
+            - crearComponentes(): void
+            - cargarTabla(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+
+        class VentanaDashboard <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - panelGrafico: PanelGrafico
+            - cmbTipo: JComboBox<String>
+            - txtDesde: JTextField
+            - txtHasta: JTextField
+            - gestorMovimientos: GestorMovimientos
+            --
+            + VentanaDashboard(estudiante, gm)
+            - cargarDatos(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+
+        class PanelGrafico <<JPanel>> {
+            - ingresos: int[]
+            - egresos: int[]
+            --
+            + setDatos(ingresos, egresos): void
+            + paintComponent(g: Graphics): void
+        }
+    }
+
+    together {
+        class VentanaCalculadora <<JFrame, ActionListener>> {
+            - estudianteActual: Estudiante
+            - esAdmin: boolean
+            - cmbEstudiantes: JComboBox<String>
+            - txtSaldoA: JTextField
+            - txtSaldoB: JTextField
+            - txtTransferenciaB: JTextField
+            - txtSaldoC: JTextField
+            - txtDutsMesC: JTextField
+            - txtDutsEventoC: JTextField
+            - gestorMovimientos: GestorMovimientos
+            - gestorNovedades: GestorNovedades
+            - gestorUsuarios: GestorUsuarios
+            --
+            + VentanaCalculadora(est, gm, gnv, gu)
+            - precargarDatosEstudiante(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+
+        class VentanaNovedades <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - tablaNovedades: JTable
+            - tablaInscripciones: JTable
+            - gestorNovedades: GestorNovedades
+            - gestorInscripciones: GestorInscripciones
+            --
+            + VentanaNovedades(estudiante, gnv, gi)
+            - cargarTablas(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+
+        class VentanaNotificaciones <<JFrame, ActionListener>> {
+            - estudiante: Estudiante
+            - tabla: JTable
+            - gestorNotificaciones: GestorNotificaciones
+            --
+            + VentanaNotificaciones(estudiante, gn)
+            - cargarTabla(): void
+            + actionPerformed(e: ActionEvent): void
+        }
+    }
+}
+
+' Relaciones únicamente entre clases del paquete
+VentanaDashboard *-- PanelGrafico : compone
+VentanaAmigos ..> VentanaTransferir : abre prellenada
+VentanaCalculadora ..> CalculadoraDuts : usa lógica
+
+note bottom of VentanaPerfil
+  Muestra nombre, documento, programa y saldo.
+  JProgressBar (0-100) hacia 70.000 DUTS.
+  DUTS acumulados, faltantes y estado.
+  NO muestra nombreUsuario.
+end note
+
+note bottom of VentanaHistorial
+  Exportar CSV -> reportes/historial_<doc>.csv
+  Comprobante -> comprobantes/comprobante_<cod>.txt
+  Filtros: tipo y rango de fechas.
+end note
+
+note bottom of PanelGrafico
+  Barras de ingresos/egresos de los
+  últimos 60 días (6 bloques de 10).
+  Usa fillRect y drawString.
+end note
+
+note bottom of VentanaCalculadora
+  Módulo A: faltantes para la meta.
+  Módulo B: simulador de transferencia.
+  Módulo C: proyección (meses / eventos).
+  Admin: elige estudiante o ingresa datos.
+end note
+
+note as N1
+  <b>Dependencias con la capa de persistencia</b>
+  VentanaPerfil -> Estudiante
+  VentanaTransferir -> GestorMovimientos, GestorUsuarios, GestorNotificaciones
+  VentanaHistorial -> GestorMovimientos
+  VentanaEstadisticas -> GestorMovimientos
+  VentanaCalculadora -> GestorMovimientos, GestorNovedades, GestorUsuarios, CalculadoraDuts
+  VentanaDashboard -> GestorMovimientos
+  VentanaNovedades -> GestorNovedades, GestorInscripciones
+  VentanaNotificaciones -> GestorNotificaciones
+  VentanaAmigos -> GestorAmigos, GestorUsuarios, GestorMovimientos
+end note
+
+VentanaHistorial .. N1
+
+@enduml

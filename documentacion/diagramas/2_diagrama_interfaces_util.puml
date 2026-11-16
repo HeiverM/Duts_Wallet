@@ -1,0 +1,110 @@
+@startuml Diagrama de Clases - Interfaces y Utilidades
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor<<interface>> #FFF9C4
+    BackgroundColor<<exception>> #FFEBEE
+    BackgroundColor<<utility>> #E3F2FD
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+
+package interfaces {
+    interface Persistible <<interface>> {
+        + {abstract} aLineaTexto(): String
+    }
+    
+    interface Exportable <<interface>> {
+        + {abstract} aFilaCsv(): String
+    }
+}
+
+package excepciones {
+    class ValidacionException <<exception>> {
+        --
+        + ValidacionException(mensaje: String)
+    }
+}
+
+package util {
+    class Validador <<utility>> {
+        --
+        + {static} validarNoVacio(valor: String, nombreCampo: String): void
+        + {static} validarSinPuntoYComa(valor: String, nombreCampo: String): void
+        + {static} validarEnteroPositivo(texto: String, nombreCampo: String): int
+        + {static} validarFecha(texto: String, nombreCampo: String): LocalDate
+        + {static} validarRangoFechas(desde: LocalDate, hasta: LocalDate): void
+    }
+    
+    class GestorTema <<utility>> {
+        - {static} temaOscuro: boolean = false
+        + {static} PANTONE_5535_C: Color = #132F20
+        --
+        + {static} alternarTema(): void
+        + {static} aplicarTema(ventana: Window): void
+        + {static} esTemaOscuro(): boolean
+        + {static} getColorFondoVentana(): Color
+        + {static} getColorFondoPanel(): Color
+        + {static} getColorTexto(): Color
+        + {static} getColorTextoBoton(): Color
+        + {static} getColorCampoFondo(): Color
+        + {static} getColorBarraCanal(): Color
+        + {static} getColorTextoGrafico(): Color
+        + {static} getColorEjeGrafico(): Color
+        - {static} recorrerYRecolorear(componente: Component): void
+    }
+    
+    class CalculadoraDuts <<utility>> {
+        + {static} META_DUTS: int = 70000
+        --
+        + {static} calcularDutsFaltantes(saldoActual: int): int
+        + {static} calcularPorcentajeMeta(saldoActual: int): int
+        + {static} calcularSaldoResultante(saldoActual: int, valorTransferencia: int): int
+        + {static} tieneSaldoSuficiente(saldoActual: int, valorTransferencia: int): boolean
+        + {static} calcularMesesParaMeta(saldoActual: int, dutsPorMes: int): int
+        + {static} calcularEventosNecesarios(saldoActual: int, dutsEvento: int): int
+    }
+}
+
+' Relaciones de dependencia
+Validador ..> ValidacionException : lanza
+ValidacionException -up-|> Exception : herencia
+
+note right of Persistible
+  Toda clase que se persista
+  en archivos .txt debe
+  implementar esta interfaz.
+end note
+
+note right of Exportable
+  Permite exportar objetos
+  a formato CSV.
+end note
+
+note right of Validador
+  Centraliza todas las
+  validaciones del sistema.
+  
+  Aplica: Encapsulamiento
+  de validaciones
+end note
+
+note right of GestorTema
+  Maneja el tema visual
+  (claro/oscuro) global.
+  
+  Estado no persistente:
+  siempre inicia en claro.
+end note
+
+note right of CalculadoraDuts
+  Lógica de cálculo de la
+  calculadora de DUTS.
+  
+  Módulos:
+  A: Faltantes y porcentaje
+  B: Simulador de transferencia
+  C: Proyección a la meta
+end note
+
+@enduml

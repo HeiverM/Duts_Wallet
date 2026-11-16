@@ -1,0 +1,148 @@
+@startuml Diagrama de Clases - Paquete Vista (Hubs y Login)
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam nodesep 40
+skinparam ranksep 60
+skinparam class {
+    BackgroundColor #F3E5F5
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+skinparam stereotypeCBackgroundColor #E1BEE7
+
+package vista {
+
+    class Main <<entry point>> {
+        --
+        + {static} main(args: String[]): void
+    }
+
+    class VentanaInicio <<JFrame, ActionListener>> {
+        - txtIdentificacion: JTextField
+        - txtContrasena: JPasswordField
+        - btnIngresar: JButton
+        - btnRegistrarse: JButton
+        - btnRecuperar: JButton
+        - btnSoporte: JButton
+        - btnSalir: JButton
+        - btnTema: BotonTema
+        - panelFondo: PanelFondoLogin
+        --
+        + VentanaInicio(gu, gm, gnv, gn, gi, ga)
+        - crearComponentes(): void
+        + volverAlInicio(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class PanelFondoLogin <<JPanel>> {
+        - imagenFondo: Image
+        --
+        + paintComponent(g: Graphics): void
+    }
+
+    class BotonTema <<JButton, ActionListener>> {
+        --
+        - actualizarEtiqueta(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaRegistro <<JFrame, ActionListener>> {
+        - txtDocumento: JTextField
+        - txtNombre: JTextField
+        - txtContrasena: JPasswordField
+        - txtPrograma: JTextField
+        - cmbPregunta: JComboBox<String>
+        - txtRespuesta: JTextField
+        - gestorUsuarios: GestorUsuarios
+        --
+        + VentanaRegistro(gestorUsuarios)
+        - crearComponentes(): void
+        - limpiarCampos(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaRecuperacion <<JFrame, ActionListener>> {
+        - txtUsuario: JTextField
+        - txtRespuesta: JTextField
+        - txtNuevaContrasena: JPasswordField
+        - gestorUsuarios: GestorUsuarios
+        --
+        + VentanaRecuperacion(gestorUsuarios)
+        - crearComponentes(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaSoporte <<JDialog, ActionListener>> {
+        - txtAyuda: JTextArea
+        - btnCerrar: JButton
+        --
+        + VentanaSoporte(ventanaPadre: JFrame)
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaMenuEstudiante <<JFrame, ActionListener>> {
+        - estudiante: Estudiante
+        - ventanaInicio: VentanaInicio
+        - btnTema: BotonTema
+        --
+        + VentanaMenuEstudiante(estudiante, ventanaInicio, ...)
+        - crearComponentes(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaMenuAdmin <<JFrame, ActionListener>> {
+        - administrador: Administrador
+        - ventanaInicio: VentanaInicio
+        - btnTema: BotonTema
+        --
+        + VentanaMenuAdmin(administrador, ventanaInicio, ...)
+        - crearComponentes(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+}
+
+' Relaciones
+Main ..> VentanaInicio : crea
+VentanaInicio *-- PanelFondoLogin : compone
+VentanaInicio *-- BotonTema : compone
+VentanaInicio ..> VentanaRegistro : abre
+VentanaInicio ..> VentanaRecuperacion : abre
+VentanaInicio ..> VentanaSoporte : abre
+VentanaInicio ..> VentanaMenuEstudiante : abre (ESTUDIANTE)
+VentanaInicio ..> VentanaMenuAdmin : abre (ADMINISTRADOR)
+VentanaMenuEstudiante ..> VentanaInicio : volverAlInicio()
+VentanaMenuAdmin ..> VentanaInicio : volverAlInicio()
+
+note bottom of Main
+  Punto de entrada.
+  Crea los 6 gestores una vez
+  y abre VentanaInicio.
+end note
+
+note bottom of VentanaInicio
+  Login por documento (estudiantes)
+  o usuario (admin excepción).
+  Al iniciar sesión se OCULTA
+  (no se destruye) y se pasa
+  a sí misma a los menús.
+  Botón Salir: único System.exit(0)
+end note
+
+note bottom of VentanaMenuEstudiante
+  8 botones:
+  1. Perfil   5. Dashboard
+  2. Transferir   6. Novedades
+  3. Historial   7. Notificaciones
+  4. Estadísticas   8. Amigos
+  Al abrirse llama generarProximidad()
+end note
+
+note bottom of VentanaMenuAdmin
+  3 botones:
+  1. Admin DUTS
+  2. Admin Novedades
+  3. Admin Asistencia
+end note
+
+@enduml

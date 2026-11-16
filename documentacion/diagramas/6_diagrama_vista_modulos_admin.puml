@@ -1,0 +1,100 @@
+@startuml Diagrama de Clases - Paquete Vista (Módulos Administrador)
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam nodesep 40
+skinparam ranksep 60
+skinparam class {
+    BackgroundColor #F3E5F5
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+skinparam stereotypeCBackgroundColor #E1BEE7
+
+package vista {
+
+    class VentanaAdminDuts <<JFrame, ActionListener>> {
+        - administrador: Administrador
+        - tabla: JTable
+        - modeloTabla: DefaultTableModel
+        - txtDocumento: JTextField
+        - txtValor: JTextField
+        - txtDescripcion: JTextField
+        - gestorMovimientos: GestorMovimientos
+        - gestorUsuarios: GestorUsuarios
+        --
+        + VentanaAdminDuts(admin, gm, gu)
+        - crearComponentes(): void
+        - cargarTabla(): void
+        - limpiarCampos(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaAdminNovedades <<JFrame, ActionListener>> {
+        - administrador: Administrador
+        - tabla: JTable
+        - modeloTabla: DefaultTableModel
+        - txtNombre: JTextField
+        - txtFecha: JTextField
+        - txtLugar: JTextField
+        - txtValorDuts: JTextField
+        - txtDescripcion: JTextArea
+        - txtCondiciones: JTextArea
+        - gestorNovedades: GestorNovedades
+        --
+        + VentanaAdminNovedades(admin, gnv)
+        - crearComponentes(): void
+        - cargarTabla(): void
+        - limpiarCampos(): void
+        - leerValorDuts(): int
+        + actionPerformed(e: ActionEvent): void
+    }
+
+    class VentanaAdminAsistencia <<JFrame, ActionListener>> {
+        - administrador: Administrador
+        - cmbNovedades: JComboBox<String>
+        - tablaInscritos: JTable
+        - modeloTabla: DefaultTableModel
+        - btnAsistio: JButton
+        - btnNoAsistio: JButton
+        - gestorNovedades: GestorNovedades
+        - gestorInscripciones: GestorInscripciones
+        --
+        + VentanaAdminAsistencia(admin, gnv, gi)
+        - crearComponentes(): void
+        - cargarInscritos(): void
+        + actionPerformed(e: ActionEvent): void
+    }
+}
+
+' Relaciones
+VentanaAdminDuts ..> GestorMovimientos : CRUD asignaciones
+VentanaAdminDuts ..> GestorUsuarios : valida estudiante
+VentanaAdminNovedades ..> GestorNovedades : CRUD novedades
+VentanaAdminAsistencia ..> GestorInscripciones : marca asistencia
+VentanaAdminAsistencia ..> GestorNovedades : lista novedades
+
+note bottom of VentanaAdminDuts
+  CRUD de asignaciones de DUTS
+  Crear: suma saldo + movimiento ASIGNACION
+  Actualizar: ajusta saldo por la diferencia
+  Eliminar: resta saldo (valida que alcance)
+end note
+
+note bottom of VentanaAdminNovedades
+  CRUD de novedades
+  Valida:
+  - Fecha formato yyyy-MM-dd válido
+  - Fecha no anterior a hoy (al crear)
+  - valorDuts >= 0
+end note
+
+note bottom of VentanaAdminAsistencia
+  Asistió: acredita valorDuts (EVENTO),
+           estado = ASISTIO
+  No asistió: descuenta 20% de valorDuts
+           (PENALIZACION), ajustado al saldo
+           disponible, estado = NO_ASISTIO
+end note
+
+@enduml

@@ -1,0 +1,90 @@
+@startuml Diagrama de Clases - Visión Integral (Arquitectura por Capas)
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 13
+skinparam nodesep 30
+skinparam ranksep 50
+skinparam packageStyle rectangle
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+
+title DUTS Wallet — Arquitectura completa por capas
+
+package "vista — Capa de presentación (Swing)" #F3E5F5 {
+    class Main <<entry point>>
+    class "VentanaInicio\n+ Registro / Recuperación / Soporte" as Login
+    class "VentanaMenuEstudiante\nVentanaMenuAdmin" as Menus
+    class "9 módulos del estudiante\n(Perfil, Transferir, Historial,\nEstadísticas, Calculadora, Dashboard,\nNovedades, Notificaciones, Amigos)" as ModEst
+    class "3 módulos del administrador\n(DUTS, Novedades, Asistencia)" as ModAdmin
+    class "PanelGrafico\nPanelFondoLogin\nBotonTema" as Componentes
+}
+
+package "persistencia — Capa de datos" #E1F5FE {
+    class "ArchivoTexto\n(lectura/escritura .txt)" as AT
+    class "GestorUsuarios\nGestorMovimientos\nGestorNovedades" as G1
+    class "GestorInscripciones\nGestorNotificaciones\nGestorAmigos\nGestorAuditoria (static)" as G2
+}
+
+package "modelo — Capa de dominio" #E8F5E9 {
+    class "Usuario (abstracta)\nEstudiante\nAdministrador" as M1
+    class "Movimiento\nNovedad\nInscripcion" as M2
+    class "Notificacion\nAmistad" as M3
+}
+
+package "util" #E3F2FD {
+    class "Validador\nCalculadoraDuts\nGestorTema" as Util
+}
+
+package "contratos" #FFF9C4 {
+    class "Persistible\nExportable" as Ifaces
+    class "ValidacionException" as Ex
+}
+
+' Flujo de dependencias (de arriba hacia abajo)
+Main --> Login
+Login --> Menus
+Menus --> ModEst
+Menus --> ModAdmin
+Login --> Componentes
+ModEst --> Componentes
+
+ModEst ..> G1 : usa gestores
+ModAdmin ..> G1
+ModEst ..> G2
+ModAdmin ..> G2
+Menus ..> G1
+
+G1 ..> M1 : persiste
+G1 ..> M2
+G2 ..> M2
+G2 ..> M3
+G1 ..> AT
+G2 ..> AT
+
+ModEst ..> Util : calcula
+G1 ..> Util : valida
+G1 ..> Ex : lanza
+M1 ..> Ifaces : implementa
+M2 ..> Ifaces
+
+' Notas
+note right of ModEst
+  Usan GestorTema.aplicarTema()
+  antes de mostrarse (herencia de tema).
+end note
+
+note bottom of Ifaces
+  Persistible -> aLineaTexto()
+  Exportable -> aFilaCsv() (solo Movimiento)
+end note
+
+note bottom of AT
+  Archivos en datos/: usuarios, movimientos,
+  novedades, inscripciones, notificaciones,
+  amigos, auditoria. Separador ';'.
+end note
+
+@enduml

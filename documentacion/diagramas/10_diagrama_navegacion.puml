@@ -1,0 +1,98 @@
+@startuml Diagrama de Navegación - Flujo entre Ventanas
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle rectangle
+skinparam activity {
+    BackgroundColor #E8F5E9
+    BorderColor #132F20
+}
+skinparam state {
+    BackgroundColor #E3F2FD
+    BorderColor #132F20
+}
+
+title Flujo de navegación entre ventanas
+
+state "VentanaInicio\n(Login / Registro / Recuperación / Soporte)" as Inicio #E1F5FE {
+}
+
+state "VentanaRegistro" as Registro
+state "VentanaRecuperacion" as Recuperacion
+state "VentanaSoporte" as Soporte #E0F7FA
+
+state "VentanaMenuEstudiante" as MenuEst #E8F5E9
+state "VentanaMenuAdmin" as MenuAdmin #E8F5E9
+
+state "Módulos Estudiante" as ModEst {
+  state "VentanaPerfil" as Perfil
+  state "VentanaTransferir" as Transferir
+  state "VentanaHistorial" as Historial
+  state "VentanaEstadisticas" as Estadisticas
+  state "VentanaCalculadora" as Calculadora
+  state "VentanaDashboard" as Dashboard
+  state "VentanaNovedades" as Novedades
+  state "VentanaNotificaciones" as Notificaciones
+  state "VentanaAmigos" as Amigos
+}
+
+state "Módulos Administrador" as ModAdmin {
+  state "VentanaAdminDuts" as AdminDuts
+  state "VentanaAdminNovedades" as AdminNovedades
+  state "VentanaAdminAsistencia" as AdminAsistencia
+}
+
+[*] --> Inicio : main()
+
+Inicio --> Registro : Botón Registrarse
+Inicio --> Recuperacion : Botón Recuperar
+Inicio --> Soporte : Botón Soporte
+Inicio --> MenuEst : Login (rol ESTUDIANTE)
+Inicio --> MenuAdmin : Login (rol ADMINISTRADOR)
+
+Registro --> Inicio : Cancelar/Registrar
+Recuperacion --> Inicio : Cambiar/Cancelar
+Soporte --> Inicio : Cerrar
+
+MenuEst --> Perfil
+MenuEst --> Transferir
+MenuEst --> Historial
+MenuEst --> Estadisticas
+MenuEst --> Calculadora
+MenuEst --> Dashboard
+MenuEst --> Novedades
+MenuEst --> Notificaciones
+MenuEst --> Amigos
+
+MenuAdmin --> AdminDuts
+MenuAdmin --> AdminNovedades
+MenuAdmin --> AdminAsistencia
+
+Amigos --> Transferir : abre prellenada
+
+MenuEst --> Inicio : Cerrar sesión\n(volverAlInicio)
+MenuAdmin --> Inicio : Cerrar sesión\n(volverAlInicio)
+
+Inicio --> [*] : Botón Salir\n(System.exit)
+
+note right of Inicio
+  Login por:
+  - Documento (estudiantes)
+  - Usuario 'admin' (excepción)
+  
+  Al iniciar sesión se OCULTA,
+  no se destruye.
+end note
+
+note right of ModEst
+  Cada módulo se abre como
+  ventana nueva (DISPOSE_ON_CLOSE).
+  El menú se mantiene abierto.
+end note
+
+note bottom of Amigos
+  VentanaAmigos puede abrir
+  VentanaTransferir con el
+  documento del amigo
+  ya seleccionado.
+end note
+
+@enduml

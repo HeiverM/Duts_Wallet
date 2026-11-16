@@ -1,0 +1,133 @@
+@startuml Diagrama de Dependencias - Gestores
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor #E3F2FD
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+skinparam classAttributeIconSize 0
+
+title Dependencias entre Gestores (creados una sola vez en Main)
+
+class Main <<entry point>> {
+    + main(args: String[]): void
+}
+
+class GestorUsuarios {
+    - usuarios: ArrayList<Usuario>
+    + GestorUsuarios()
+    + registrar(Estudiante)
+    + iniciarSesion(String, String): Usuario
+    + buscarEstudiantePorDocumento(String): Estudiante
+}
+
+class GestorMovimientos {
+    - movimientos: ArrayList<Movimiento>
+    - gestorUsuarios: GestorUsuarios
+    + GestorMovimientos(GestorUsuarios)
+    + transferir(...)
+    + asignarDuts(...)
+    + calcularPromedio(...)
+    + exportarCsv(String)
+}
+
+class GestorNovedades {
+    - novedades: ArrayList<Novedad>
+    + GestorNovedades()
+    + crear(Novedad)
+    + listar(): ArrayList<Novedad>
+    + buscarPorCodigo(String): Novedad
+}
+
+class GestorNotificaciones {
+    - notificaciones: ArrayList<Notificacion>
+    + GestorNotificaciones()
+    + agregar(String, String)
+    + listarPorUsuario(String)
+    + generarProximidad(...)
+}
+
+class GestorInscripciones {
+    - inscripciones: ArrayList<Inscripcion>
+    - gestorMovimientos: GestorMovimientos
+    - gestorNotificaciones: GestorNotificaciones
+    - gestorUsuarios: GestorUsuarios
+    - gestorNovedades: GestorNovedades
+    + GestorInscripciones(GM, GN, GU, GNV)
+    + inscribir(...)
+    + cancelar(...)
+    + marcarAsistencia(...)
+    + marcarInasistencia(...)
+}
+
+class GestorAmigos {
+    - amistades: ArrayList<Amistad>
+    - gestorUsuarios: GestorUsuarios
+    + GestorAmigos(GestorUsuarios)
+    + agregar(String, String)
+    + listarAmigos(String)
+}
+
+class GestorAuditoria <<static utility>> {
+    + {static} registrar(String, String, String)
+}
+
+class ArchivoTexto <<static utility>> {
+    + {static} leerLineas(String): ArrayList<String>
+    + {static} escribirLineas(String, ArrayList<String>)
+    + {static} agregarLinea(String, String)
+}
+
+' Creación desde Main
+Main ..> GestorUsuarios : new
+Main ..> GestorMovimientos : new
+Main ..> GestorNovedades : new
+Main ..> GestorNotificaciones : new
+Main ..> GestorInscripciones : new
+Main ..> GestorAmigos : new
+
+' Dependencias por constructor
+GestorMovimientos ..> GestorUsuarios : inyecta
+GestorInscripciones ..> GestorMovimientos : inyecta
+GestorInscripciones ..> GestorNotificaciones : inyecta
+GestorInscripciones ..> GestorUsuarios : inyecta
+GestorInscripciones ..> GestorNovedades : inyecta
+GestorAmigos ..> GestorUsuarios : inyecta
+
+' Uso de ArchivoTexto
+GestorUsuarios ..> ArchivoTexto : usa
+GestorMovimientos ..> ArchivoTexto : usa
+GestorNovedades ..> ArchivoTexto : usa
+GestorNotificaciones ..> ArchivoTexto : usa
+GestorInscripciones ..> ArchivoTexto : usa
+GestorAmigos ..> ArchivoTexto : usa
+GestorAuditoria ..> ArchivoTexto : usa
+
+note bottom of Main
+  Orden de creación (por dependencias):
+  1. GestorUsuarios
+  2. GestorMovimientos(GestorUsuarios)
+  3. GestorNovedades
+  4. GestorNotificaciones
+  5. GestorInscripciones(GM, GN, GU, GNV)
+  6. GestorAmigos(GestorUsuarios)
+  
+  Cada uno carga su .txt al crearse.
+end note
+
+note right of GestorAuditoria
+  Único gestor 'static'.
+  No se instancia.
+  Todas las ventanas lo llaman.
+end note
+
+note right of GestorInscripciones
+  Es el gestor más acoplado:
+  necesita 4 dependencias para:
+  - Acreditar EVENTO (GM)
+  - Notificar (GN)
+  - Buscar estudiante (GU)
+  - Consultar novedad (GNV)
+end note
+
+@enduml

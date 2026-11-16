@@ -1,0 +1,108 @@
+@startuml Diagrama de Paquetes - Arquitectura General
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle rectangle
+skinparam package {
+    BackgroundColor #E8F5E9
+    BorderColor #132F20
+}
+
+package "vista" as vista {
+    [Main]
+    [VentanaInicio]
+    [VentanaMenuEstudiante]
+    [VentanaMenuAdmin]
+    [Módulos Estudiante]
+    [Módulos Admin]
+    [PanelGrafico]
+    [PanelFondoLogin]
+    [BotonTema]
+}
+
+package "persistencia" as persistencia {
+    [ArchivoTexto]
+    [GestorUsuarios]
+    [GestorMovimientos]
+    [GestorNovedades]
+    [GestorInscripciones]
+    [GestorNotificaciones]
+    [GestorAmigos]
+    [GestorAuditoria]
+}
+
+package "modelo" as modelo {
+    [Usuario] <<abstract>>
+    [Estudiante]
+    [Administrador]
+    [Movimiento]
+    [Novedad]
+    [Inscripcion]
+    [Notificacion]
+    [Amistad]
+}
+
+package "util" as util {
+    [Validador]
+    [GestorTema]
+    [CalculadoraDuts]
+}
+
+package "interfaces" as interfaces {
+    [Persistible] <<interface>>
+    [Exportable] <<interface>>
+}
+
+package "excepciones" as excepciones {
+    [ValidacionException]
+}
+
+' Dependencias entre paquetes (flujo de dependencias)
+vista ..> persistencia : usa gestores
+vista ..> modelo : usa modelos
+vista ..> util : usa utilidades
+vista ..> excepciones : captura
+
+persistencia ..> modelo : persiste objetos
+persistencia ..> interfaces : implementa contrato
+persistencia ..> util : valida datos
+persistencia ..> excepciones : lanza
+
+modelo ..> interfaces : implementa
+modelo ..> excepciones : lanza
+
+util ..> excepciones : lanza
+
+' Notas de arquitectura
+note top of vista
+  Capa de presentación (Swing)
+  - JFrame / JDialog
+  - ActionListener
+  - No contiene lógica de negocio
+end note
+
+note bottom of persistencia
+  Capa de datos
+  - Persistencia en .txt
+  - Listas en memoria
+  - Separa ';' como delimitador
+end note
+
+note bottom of modelo
+  Capa de dominio
+  - Atributos privados
+  - Getters y setters
+  - Herencia y polimorfismo
+end note
+
+note bottom of util
+  Capa de utilidades
+  - Métodos estáticos
+  - Sin Swing (excepto GestorTema)
+end note
+
+note right of interfaces
+  Contratos comunes
+  - Persistible: aLineaTexto()
+  - Exportable: aFilaCsv()
+end note
+
+@enduml

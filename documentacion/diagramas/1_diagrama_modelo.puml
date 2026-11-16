@@ -1,0 +1,194 @@
+@startuml Diagrama de Clases - Paquete Modelo
+!define RECTANGLE class
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor<<abstract>> #E8F5E9
+    BorderColor #132F20
+    ArrowColor #132F20
+}
+
+package modelo {
+    
+    abstract class Usuario <<abstract>> {
+        - documento: String
+        - nombreCompleto: String
+        - nombreUsuario: String
+        - contrasena: String
+        - preguntaSeguridad: String
+        - respuestaSeguridad: String
+        --
+        + Usuario(documento, nombreCompleto, nombreUsuario, contrasena, preguntaSeguridad, respuestaSeguridad)
+        + getDocumento(): String
+        + getNombreCompleto(): String
+        + getNombreUsuario(): String
+        + getContrasena(): String
+        + getPreguntaSeguridad(): String
+        + getRespuestaSeguridad(): String
+        + setContrasena(contrasena: String): void
+        + {abstract} getRol(): String
+        + {abstract} getResumenPerfil(): String
+        + {abstract} aLineaTexto(): String
+    }
+    
+    class Estudiante {
+        - programaAcademico: String
+        - saldoDuts: int
+        + {static} META_DUTS: int = 70000
+        --
+        + Estudiante(documento, nombreCompleto, nombreUsuario, contrasena, preguntaSeguridad, respuestaSeguridad, programaAcademico, saldoDuts)
+        + getProgramaAcademico(): String
+        + getSaldoDuts(): int
+        + sumarDuts(valor: int): void
+        + restarDuts(valor: int): void
+        + getDutsFaltantes(): int
+        + getPorcentajeMeta(): int
+        + metaCumplida(): boolean
+        + getRol(): String
+        + getResumenPerfil(): String
+        + aLineaTexto(): String
+    }
+    
+    class Administrador {
+        --
+        + Administrador(documento, nombreCompleto, nombreUsuario, contrasena, preguntaSeguridad, respuestaSeguridad)
+        + getRol(): String
+        + getResumenPerfil(): String
+        + aLineaTexto(): String
+    }
+    
+    class Movimiento {
+        - codigo: String
+        - fecha: LocalDate
+        - tipo: String
+        - documentoEmisor: String
+        - documentoReceptor: String
+        - valor: int
+        - descripcion: String
+        + {static} TIPO_TRANSFERENCIA: String = "TRANSFERENCIA"
+        + {static} TIPO_EVENTO: String = "EVENTO"
+        + {static} TIPO_PENALIZACION: String = "PENALIZACION"
+        + {static} TIPO_ASIGNACION: String = "ASIGNACION"
+        + {static} SISTEMA: String = "SISTEMA"
+        --
+        + Movimiento(codigo, fecha, tipo, documentoEmisor, documentoReceptor, valor, descripcion)
+        + getCodigo(): String
+        + getFecha(): LocalDate
+        + getTipo(): String
+        + getDocumentoEmisor(): String
+        + getDocumentoReceptor(): String
+        + getValor(): int
+        + getDescripcion(): String
+        + setValor(valor: int): void
+        + setDescripcion(descripcion: String): void
+        + aLineaTexto(): String
+        + aFilaCsv(): String
+    }
+    
+    class Novedad {
+        - codigo: String
+        - nombre: String
+        - descripcion: String
+        - fecha: LocalDate
+        - lugar: String
+        - valorDuts: int
+        - condiciones: String
+        --
+        + Novedad(codigo, nombre, descripcion, fecha, lugar, valorDuts, condiciones)
+        + getCodigo(): String
+        + getNombre(): String
+        + getDescripcion(): String
+        + getFecha(): LocalDate
+        + getLugar(): String
+        + getValorDuts(): int
+        + getCondiciones(): String
+        + setNombre(nombre: String): void
+        + setDescripcion(descripcion: String): void
+        + setFecha(fecha: LocalDate): void
+        + setLugar(lugar: String): void
+        + setValorDuts(valorDuts: int): void
+        + setCondiciones(condiciones: String): void
+        + aLineaTexto(): String
+    }
+    
+    class Inscripcion {
+        - codigoNovedad: String
+        - documentoEstudiante: String
+        - estado: String
+        - fechaInscripcion: LocalDate
+        + {static} ESTADO_INSCRITO: String = "INSCRITO"
+        + {static} ESTADO_CANCELADA: String = "CANCELADA"
+        + {static} ESTADO_ASISTIO: String = "ASISTIO"
+        + {static} ESTADO_NO_ASISTIO: String = "NO_ASISTIO"
+        --
+        + Inscripcion(codigoNovedad, documentoEstudiante, estado, fechaInscripcion)
+        + getCodigoNovedad(): String
+        + getDocumentoEstudiante(): String
+        + getEstado(): String
+        + getFechaInscripcion(): LocalDate
+        + setEstado(estado: String): void
+        + aLineaTexto(): String
+    }
+    
+    class Notificacion {
+        - documentoDestino: String
+        - fecha: LocalDate
+        - mensaje: String
+        --
+        + Notificacion(documentoDestino, fecha, mensaje)
+        + getDocumentoDestino(): String
+        + getFecha(): LocalDate
+        + getMensaje(): String
+        + aLineaTexto(): String
+    }
+    
+    class Amistad {
+        - documentoUsuario: String
+        - documentoAmigo: String
+        --
+        + Amistad(documentoUsuario, documentoAmigo)
+        + getDocumentoUsuario(): String
+        + getDocumentoAmigo(): String
+        + aLineaTexto(): String
+    }
+}
+
+' Relaciones de herencia
+Usuario <|-- Estudiante : herencia
+Usuario <|-- Administrador : herencia
+
+' Relaciones de asociación
+Estudiante "1" -- "0..*" Movimiento : envía/recibe
+Estudiante "1" -- "0..*" Inscripcion : se inscribe
+Estudiante "1" -- "0..*" Notificacion : recibe
+Estudiante "1" -- "0..*" Amistad : tiene amigos
+
+Novedad "1" -- "0..*" Inscripcion : tiene inscritos
+
+note right of Usuario
+  Clase abstracta que define
+  la estructura común de
+  usuarios del sistema.
+  
+  Aplica: Abstracción,
+  Herencia, Polimorfismo
+end note
+
+note right of Movimiento
+  Registra todas las transacciones
+  de DUTS en el sistema.
+  
+  Tipos: TRANSFERENCIA, EVENTO,
+  PENALIZACION, ASIGNACION
+end note
+
+note right of Inscripcion
+  Estados: INSCRITO, CANCELADA,
+  ASISTIO, NO_ASISTIO
+  
+  Penalización: 20% del valorDuts
+  si NO_ASISTIO
+end note
+
+@enduml
